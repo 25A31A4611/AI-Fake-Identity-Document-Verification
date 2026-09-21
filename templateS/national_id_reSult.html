@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>National ID Screening Result | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <nav class="navbar">
+
+        <div class="logo">
+            AI<span>SCREEN</span>
+        </div>
+
+        <div class="nav-status">
+            ● NATIONAL ID SCREENING RESULT
+        </div>
+
+    </nav>
+
+
+
+    <section class="sectors" style="min-height:75vh;">
+
+
+        <div class="badge">
+            NATIONAL ID SCREENING COMPLETED
+        </div>
+
+
+        <h1 style="
+        font-size:42px;
+        margin-bottom:15px;
+    ">
+
+            National ID
+            <span style="color:#35d0ff;">
+                Result
+            </span>
+
+        </h1>
+
+
+        <p style="
+        color:#aab7c8;
+        max-width:700px;
+        margin:0 auto 35px;
+        line-height:1.6;
+    ">
+
+            AI-assisted OCR processing and identity
+            field extraction have been completed.
+
+            The result is intended for authorized
+            officer review.
+
+        </p>
+
+
+
+        <!-- ========================================= -->
+        <!-- EXTRACTED INFORMATION -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <h2 style="margin-bottom:25px;">
+                Extracted Identity Information
+            </h2>
+
+
+            <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:15px;
+        ">
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Name
+                    </span>
+
+                    <strong>
+                        {{ national_id_fields.name }}
+                    </strong>
+
+                </div>
+
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        ID Number
+                    </span>
+
+                    <strong>
+                        {{ national_id_fields.id_number }}
+                    </strong>
+
+                </div>
+
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Date of Birth
+                    </span>
+
+                    <strong>
+                        {{ national_id_fields.date_of_birth }}
+                    </strong>
+
+                </div>
+
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Gender
+                    </span>
+
+                    <strong>
+                        {{ national_id_fields.gender }}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- NATIONAL ID VALIDATION -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <div class="badge">
+                DOCUMENT VALIDATION
+            </div>
+
+
+            <h2 style="margin-bottom:25px;">
+                National ID Validation
+            </h2>
+
+
+            {% for result in national_id_validation_results %}
+
+            <div class="result-box" style="margin-bottom:12px;">
+
+                <span class="result-label">
+                    {{ result.check }}
+                </span>
+
+
+                <strong>
+                    {{ result.status }}
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+                line-height:1.5;
+            ">
+
+                    {{ result.message }}
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- NATIONAL ID FORENSIC ANALYSIS -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <div class="badge">
+                DOCUMENT FORENSICS
+            </div>
+
+
+            <h2 style="margin-bottom:25px;">
+                Forensic Analysis
+            </h2>
+
+
+            {% for result in national_id_forensic_results %}
+
+            <div class="result-box" style="margin-bottom:12px;">
+
+                <span class="result-label">
+                    {{ result.check }}
+                </span>
+
+
+                <strong>
+                    {{ result.status }}
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+                line-height:1.5;
+            ">
+
+                    {{ result.message }}
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- FACE DETECTION -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <div class="badge">
+                FACE DETECTION
+            </div>
+
+
+            <h2 style="margin-bottom:25px;">
+                Face Screening
+            </h2>
+
+
+            <div class="result-box">
+
+                <span class="result-label">
+                    Face Detection Status
+                </span>
+
+                <strong>
+                    {{ face_result.status }}
+                </strong>
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+                line-height:1.5;
+            ">
+
+                    {{ face_result.message }}
+
+                </p>
+
+            </div>
+
+
+            <div class="result-box" style="margin-top:12px;">
+
+                <span class="result-label">
+                    Faces Detected
+                </span>
+
+                <strong>
+                    {{ face_result.face_count }}
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- OCR TEXT -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+        text-align:left;
+    ">
+
+
+            <h2 style="margin-bottom:20px;">
+                OCR Extracted Text
+            </h2>
+
+
+            <pre style="
+            white-space:pre-wrap;
+            color:#8fa0b5;
+            line-height:1.6;
+            font-family:Arial,sans-serif;
+        ">{{ ocr_text }}</pre>
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- REFERENCE DATABASE -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <div class="badge">
+                REFERENCE DATABASE
+            </div>
+
+
+            <h2 style="margin-bottom:25px;">
+                Reference Database Check
+            </h2>
+
+
+            <div class="result-box">
+
+                <span class="result-label">
+                    Match Status
+                </span>
+
+
+                <strong>
+                    {{ reference_result.status }}
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+                line-height:1.5;
+            ">
+
+                    {{ reference_result.message }}
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- OFFICER REVIEW -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:40px auto;
+        padding:25px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <strong style="color:#35d0ff;">
+
+                ● OFFICER REVIEW REQUIRED
+
+            </strong>
+
+
+            <p style="
+            color:#8fa0b5;
+            margin-top:12px;
+            line-height:1.6;
+        ">
+
+                AI screening provides supporting signals only.
+                The authorized officer should review the
+                original document and make the final decision.
+
+            </p>
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- BUTTONS -->
+        <!-- ========================================= -->
+
+        <a href="/national-id" class="start-btn">
+
+            SCREEN ANOTHER ID →
+
+        </a>
+
+
+        <br>
+        <br>
+
+
+        <a href="/dashboard" class="start-btn">
+
+            BACK TO DASHBOARD →
+
+        </a>
+
+
+    </section>
+
+
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Screening Result | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <nav class="navbar">
+
+        <div class="logo">
+            AI<span>SCREEN</span>
+        </div>
+
+        <div class="nav-status">
+            ● SCREENING RESULT
+        </div>
+
+    </nav>
+
+
+
+    <section class="sectors" style="min-height:75vh;">
+
+
+        <div class="badge">
+            PASSPORT SCREENING COMPLETED
+        </div>
+
+
+        <h1 style="
+        font-size:42px;
+        margin-bottom:15px;
+    ">
+
+            Screening
+            <span style="color:#35d0ff;">
+                Result
+            </span>
+
+        </h1>
+
+
+        <p style="
+        color:#aab7c8;
+        max-width:700px;
+        margin:0 auto 35px;
+        line-height:1.6;
+    ">
+
+            AI-assisted multi-layer screening has been completed.
+            The result is an officer-assistance signal and does not
+            by itself prove that a document is fake.
+
+        </p>
+
+
+
+        <!-- ========================================= -->
+        <!-- RISK SCORE -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <div class="badge">
+                AI-ASSISTED RISK ASSESSMENT
+            </div>
+
+
+            <h2 style="margin-bottom:15px;">
+
+                Risk Score:
+
+                <span style="color:#35d0ff;">
+
+                    {{ risk_result.score }}/100
+
+                </span>
+
+            </h2>
+
+
+            <h3 style="margin-bottom:15px;">
+
+                Risk Level:
+
+                <span style="color:#79e6a8;">
+
+                    {{ risk_result.level }}
+
+                </span>
+
+            </h3>
+
+
+            <p style="color:#aab7c8;">
+
+                {% if risk_result.reasons %}
+
+                {% for reason in risk_result.reasons %}
+
+                • {{ reason }}<br>
+
+                {% endfor %}
+
+                {% else %}
+
+                No major risk signals detected.
+
+                {% endif %}
+
+            </p>
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- PASSPORT INFORMATION -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <h2 style="margin-bottom:25px;">
+                Extracted Passport Information
+            </h2>
+
+
+            <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:15px;
+        ">
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Name
+                    </span>
+
+                    <strong>
+                        {{ passport_fields.name }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Passport Number
+                    </span>
+
+                    <strong>
+                        {{ passport_fields.passport_number }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Nationality
+                    </span>
+
+                    <strong>
+                        {{ passport_fields.nationality }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Date of Birth
+                    </span>
+
+                    <strong>
+                        {{ passport_fields.date_of_birth }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Gender
+                    </span>
+
+                    <strong>
+                        {{ passport_fields.gender }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Date of Expiry
+                    </span>
+
+                    <strong>
+                        {{ passport_fields.date_of_expiry }}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- VALIDATION -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <h2 style="margin-bottom:25px;">
+                Document Validation
+            </h2>
+
+
+            {% for result in validation_results %}
+
+            <div class="result-box" style="margin-bottom:12px;">
+
+                <span class="result-label">
+                    {{ result.check }}
+                </span>
+
+
+                <strong>
+                    {{ result.status }}
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+            ">
+
+                    {{ result.message }}
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- FORENSICS -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <h2 style="margin-bottom:25px;">
+                Tampering / Forensic Screening
+            </h2>
+
+
+            {% for result in forensic_results %}
+
+            <div class="result-box" style="margin-bottom:12px;">
+
+                <span class="result-label">
+                    {{ result.check }}
+                </span>
+
+
+                <strong>
+                    {{ result.status }}
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+            ">
+
+                    {{ result.message }}
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- FACE DETECTION -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <h2 style="margin-bottom:25px;">
+                Face Detection
+            </h2>
+
+
+            <div class="result-box">
+
+
+                <span class="result-label">
+                    Status
+                </span>
+
+
+                <strong>
+                    {{ face_result.status }}
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+            ">
+
+                    {{ face_result.message }}
+
+                </p>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:8px;
+            ">
+
+                    Faces Detected:
+                    {{ face_result.face_count }}
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- FACE VERIFICATION -->
+        <!-- ========================================= -->
+
+        {% if face_comparison_result is defined %}
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <h2 style="margin-bottom:25px;">
+                Face Verification
+            </h2>
+
+
+            <div class="result-box">
+
+
+                <span class="result-label">
+                    Verification Status
+                </span>
+
+
+                <strong>
+                    {{ face_comparison_result.status }}
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin-top:10px;
+            ">
+
+                    {{ face_comparison_result.message }}
+
+                </p>
+
+
+                <p style="
+                color:#dce7f5;
+                margin-top:15px;
+            ">
+
+                    Similarity Score:
+
+                    <strong>
+                        {{ face_comparison_result.similarity }}%
+                    </strong>
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- ========================================= -->
+        <!-- OCR TEXT -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:0 auto 30px;
+        padding:30px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+        text-align:left;
+    ">
+
+
+            <h2 style="margin-bottom:20px;">
+                OCR Extracted Text
+            </h2>
+
+
+            <pre style="
+            white-space:pre-wrap;
+            color:#8fa0b5;
+            line-height:1.6;
+            font-family:Arial,sans-serif;
+        ">{{ ocr_text }}</pre>
+
+
+        </div>
+
+
+
+        <!-- ========================================= -->
+        <!-- OFFICER ACTION -->
+        <!-- ========================================= -->
+
+        <div style="
+        max-width:750px;
+        margin:40px auto;
+        padding:25px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:12px;
+    ">
+
+
+            <strong style="color:#35d0ff;">
+
+                ● OFFICER REVIEW REQUIRED
+
+            </strong>
+
+
+            <p style="
+            color:#8fa0b5;
+            margin-top:12px;
+            line-height:1.6;
+        ">
+
+                The AI system provides screening signals only.
+                The authorized officer should review the document
+                and make the final decision.
+
+            </p>
+
+
+        </div>
+
+
+
+        <a href="/passport" class="start-btn">
+
+            SCREEN ANOTHER DOCUMENT →
+
+        </a>
+
+
+    </section>
+
+
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+
+</body>
+
+</html>

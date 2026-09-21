@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Visa Screening Result | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .result-container {
+            width: 86%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .page-title h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: #8fa0b5;
+        }
+
+        .section {
+            background: #0b1829;
+            border: 1px solid #203047;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            color: #35d0ff;
+            margin-bottom: 20px;
+            font-size: 21px;
+        }
+
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .result-box {
+            background: #07111f;
+            border: 1px solid #203047;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .result-label {
+            display: block;
+            color: #718096;
+            font-size: 12px;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+        }
+
+        .result-box strong {
+            color: #dce7f5;
+            font-size: 15px;
+        }
+
+        .ocr-box {
+            background: #050c16;
+            border: 1px solid #203047;
+            border-radius: 8px;
+            padding: 20px;
+            color: #aab7c8;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .check-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #203047;
+        }
+
+        .check-row:last-child {
+            border-bottom: none;
+        }
+
+        .check-name {
+            color: #dce7f5;
+            font-weight: bold;
+        }
+
+        .check-message {
+            color: #8fa0b5;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .status {
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-PASS {
+            background: rgba(121, 230, 168, 0.12);
+            color: #79e6a8;
+            border: 1px solid #79e6a8;
+        }
+
+        .status-WARNING {
+            background: rgba(255, 193, 7, 0.12);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
+        .status-REVIEW {
+            background: rgba(255, 152, 0, 0.12);
+            color: #ff9800;
+            border: 1px solid #ff9800;
+        }
+
+        .status-FAIL {
+            background: rgba(255, 80, 80, 0.12);
+            color: #ff6464;
+            border: 1px solid #ff6464;
+        }
+
+        .cross-document {
+            border-left: 4px solid #35d0ff;
+        }
+
+        .reference-box {
+            background: #07111f;
+            border: 1px solid #203047;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .reference-box p {
+            color: #aab7c8;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 22px;
+            background: #35d0ff;
+            color: #06101c;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 800px) {
+            .field-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .check-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            AI<span>SCREEN</span>
+        </div>
+
+        <div class="nav-status">
+            ● VISA SCREENING ONLINE
+        </div>
+
+    </nav>
+
+
+    <div class="result-container">
+
+        <!-- PAGE TITLE -->
+
+        <div class="page-title">
+
+            <div class="badge">
+                AI-ASSISTED DOCUMENT SCREENING
+            </div>
+
+            <h1>
+                Visa <span style="color:#35d0ff;">Screening Result</span>
+            </h1>
+
+            <p>
+                Multi-layer screening using OCR, validation and cross-document analysis.
+            </p>
+
+        </div>
+
+
+        <!-- FILE INFORMATION -->
+
+        <div class="section">
+
+            <h2>📄 Uploaded Document</h2>
+
+            <div class="field-grid">
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        File Name
+                    </span>
+
+                    <strong>
+                        {{ filename }}
+                    </strong>
+
+                </div>
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Screening Type
+                    </span>
+
+                    <strong>
+                        Visa Document
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXTRACTED VISA FIELDS -->
+
+        <div class="section">
+
+            <h2>🔍 Extracted Visa Information</h2>
+
+            <div class="field-grid">
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Name
+                    </span>
+
+                    <strong>
+                        {{ visa_fields.name }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Visa / Passport Reference
+                    </span>
+
+                    <strong>
+                        {{ visa_fields.visa_number }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Visa Type
+                    </span>
+
+                    <strong>
+                        {{ visa_fields.visa_type }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Date of Birth
+                    </span>
+
+                    <strong>
+                        {{ visa_fields.date_of_birth }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Nationality
+                    </span>
+
+                    <strong>
+                        {{ visa_fields.nationality }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Issue Date
+                    </span>
+
+                    <strong>
+                        {{ visa_fields.date_of_issue }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <span class="result-label">
+                        Expiry Date
+                    </span>
+
+                    <strong>
+                        {{ visa_fields.date_of_expiry }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VISA VALIDATION -->
+
+        <div class="section">
+
+            <h2>🛡️ Visa Validation</h2>
+
+            {% for result in visa_validation_results %}
+
+            <div class="check-row">
+
+                <div>
+
+                    <div class="check-name">
+                        {{ result.check }}
+                    </div>
+
+                    <div class="check-message">
+                        {{ result.message }}
+                    </div>
+
+                </div>
+
+                <div class="status status-{{ result.status }}">
+                    {{ result.status }}
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- CROSS DOCUMENT ANALYSIS -->
+
+        <div class="section cross-document">
+
+            <h2>🔗 Cross-Document Analysis</h2>
+
+            <p style="color:#8fa0b5; margin-bottom:20px;">
+                Passport ↔ Visa Consistency Analysis
+            </p>
+
+
+            {% if cross_document_result %}
+
+            {% for result in cross_document_result %}
+
+            <div class="check-row">
+
+                <div>
+
+                    <div class="check-name">
+                        {{ result.check }}
+                    </div>
+
+                    <div class="check-message">
+                        {{ result.message }}
+                    </div>
+
+                </div>
+
+                <div class="status status-{{ result.status }}">
+                    {{ result.status }}
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+            {% else %}
+
+            <div class="reference-box">
+
+                <p>
+                    Passport reference information is not available.
+                    Please screen a passport first.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- OCR TEXT -->
+
+        <div class="section">
+
+            <h2>🧠 OCR Extracted Text</h2>
+
+            <div class="ocr-box">
+                {{ ocr_text }}
+            </div>
+
+        </div>
+
+
+        <!-- PROTOTYPE NOTE -->
+
+        <div class="section">
+
+            <h2>⚠️ Prototype Notice</h2>
+
+            <div class="reference-box">
+
+                <p>
+                    This system is an AI-assisted screening prototype.
+                    Screening results are risk signals intended to support
+                    authorized officer review and do not independently prove
+                    that a document or identity is fraudulent.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div style="text-align:center;">
+
+            <a href="/airport" class="back-btn">
+                ← Back to Airport Screening
+            </a>
+
+            <a href="/dashboard" class="back-btn" style="margin-left:10px;">
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+</body>
+
+</html>

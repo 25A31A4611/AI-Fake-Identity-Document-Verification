@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Access Verification | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            AI<span>SCREEN</span>
+        </div>
+
+        <div class="nav-status">
+            ● SECURE ACCESS
+        </div>
+
+    </nav>
+
+
+    <section class="hero">
+
+        <div class="badge">
+            ACCESS VERIFICATION
+        </div>
+
+        <h1>
+            Enter <span>Override Code</span>
+        </h1>
+
+        <p>
+            Enter the authorized prototype access code
+            to continue to the screening console.
+        </p>
+
+
+        <form action="/dashboard" method="GET" style="width:100%; max-width:400px;">
+
+            <input type="text" name="code" placeholder="Enter Override Code" required style="
+                    width:100%;
+                    padding:15px;
+                    margin-bottom:20px;
+                    border-radius:8px;
+                    border:1px solid #203047;
+                    background:#0b1829;
+                    color:white;
+                    font-size:16px;
+                ">
+
+
+            <button type="submit" class="start-btn" style="border:none; cursor:pointer;">
+
+                VERIFY & CONTINUE →
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+</body>
+
+</html>

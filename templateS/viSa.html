@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Visa Screening | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <nav class="navbar">
+
+        <div class="logo">
+            AI<span>SCREEN</span>
+        </div>
+
+        <div class="nav-status">
+            ● VISA SCREENING
+        </div>
+
+    </nav>
+
+
+
+    <section class="sectors" style="min-height:75vh;">
+
+
+        <div class="badge">
+            VISA VERIFICATION
+        </div>
+
+
+        <h1 style="font-size:42px;
+               margin-bottom:15px;">
+
+            Upload
+            <span style="color:#35d0ff;">
+                Visa
+            </span>
+
+        </h1>
+
+
+        <p style="
+        color:#aab7c8;
+        max-width:650px;
+        margin:0 auto 35px;
+        line-height:1.6;
+    ">
+
+            Upload a clear visa image.
+            The system will extract visa information
+            and compare it with the passport information.
+
+        </p>
+
+
+
+        <form action="/visa" method="POST" enctype="multipart/form-data" style="
+              width:100%;
+              max-width:550px;
+              margin:auto;
+          ">
+
+
+            <div style="
+            background:#0b1829;
+            border:1px solid #203047;
+            border-radius:12px;
+            padding:35px;
+            text-align:center;
+        ">
+
+
+                <div style="font-size:55px;">
+                    📄
+                </div>
+
+                <br>
+
+
+                <strong style="font-size:20px;">
+                    Select Visa Document
+                </strong>
+
+
+                <p style="
+                color:#8fa0b5;
+                margin:12px 0 25px;
+                font-size:14px;
+            ">
+
+                    Supported:
+                    JPG, JPEG, PNG, PDF
+
+                    <br>
+
+                    Maximum size:
+                    10 MB
+
+                </p>
+
+
+                <input type="file" name="visa" accept=".jpg,.jpeg,.png,.pdf" required style="
+                    width:100%;
+                    padding:15px;
+                    border:1px solid #203047;
+                    border-radius:8px;
+                    background:#07111f;
+                    color:#dce7f5;
+                ">
+
+
+                <br>
+                <br>
+
+
+                <button type="submit" class="start-btn" style="
+                    border:none;
+                    cursor:pointer;
+                ">
+
+                    UPLOAD VISA →
+
+                </button>
+
+
+            </div>
+
+        </form>
+
+
+
+        <div style="
+        margin:40px auto 0;
+        max-width:750px;
+        padding:20px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:10px;
+        color:#aab7c8;
+    ">
+
+            <strong style="color:#79e6a8;">
+                ● VISA SCREENING PIPELINE
+            </strong>
+
+            <br>
+            <br>
+
+            Upload →
+            OCR →
+            Visa Field Extraction →
+            Validation →
+            Cross-Document Analysis
+
+        </div>
+
+
+    </section>
+
+
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+
+</body>
+
+</html>

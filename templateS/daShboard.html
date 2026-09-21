@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Screening Console | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            AI<span>SCREEN</span>
+        </div>
+
+        <div class="nav-status">
+            ● SCREENING CONSOLE ONLINE
+        </div>
+
+    </nav>
+
+
+    <!-- DASHBOARD -->
+
+    <section class="sectors" style="min-height:75vh;">
+
+        <div class="badge">
+            AUTHORIZED SCREENING CONSOLE
+        </div>
+
+
+        <h1 style="font-size:42px; margin-bottom:15px;">
+            Welcome to the <span style="color:#35d0ff;">
+                Screening Dashboard
+            </span>
+        </h1>
+
+
+        <p style="
+            color:#aab7c8;
+            max-width:650px;
+            margin:0 auto 40px;
+            line-height:1.6;
+        ">
+
+            Select the operational sector where identity
+            or document screening needs to be performed.
+
+        </p>
+
+
+        <!-- SECTOR CARDS -->
+
+        <div class="sector-grid">
+
+
+            <a href="/airport" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:35px;">
+                    ✈️
+                </div>
+
+                <br>
+
+                <strong>Airport Security</strong>
+
+                <p style="
+                    margin-top:10px;
+                    color:#8fa0b5;
+                    font-size:13px;
+                ">
+
+                    Passport • Visa • Identity
+
+                </p>
+
+            </a>
+
+
+            <a href="/traffic" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:35px;">
+                    🚦
+                </div>
+
+                <br>
+
+                <strong>Traffic Enforcement</strong>
+
+                <p style="
+                    margin-top:10px;
+                    color:#8fa0b5;
+                    font-size:13px;
+                ">
+
+                    Driving License • Identity
+
+                </p>
+
+            </a>
+
+
+            <a href="/banking" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:35px;">
+                    🏦
+                </div>
+
+                <br>
+
+                <strong>Banking</strong>
+
+                <p style="
+                    margin-top:10px;
+                    color:#8fa0b5;
+                    font-size:13px;
+                ">
+
+                    Customer Identity • Documents
+
+                </p>
+
+            </a>
+
+
+            <a href="/border" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:35px;">
+                    🛂
+                </div>
+
+                <br>
+
+                <strong>Border Integrity</strong>
+
+                <p style="
+                    margin-top:10px;
+                    color:#8fa0b5;
+                    font-size:13px;
+                ">
+
+                    Travel Documents • Identity
+
+                </p>
+
+            </a>
+
+
+            <a href="/government" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:35px;">
+                    🏛️
+                </div>
+
+                <br>
+
+                <strong>Government Services</strong>
+
+                <p style="
+                    margin-top:10px;
+                    color:#8fa0b5;
+                    font-size:13px;
+                ">
+
+                    Identity • Certificates • Documents
+
+                </p>
+
+            </a>
+
+
+        </div>
+
+
+        <!-- SYSTEM STATUS -->
+
+        <div style="
+            margin-top:45px;
+            padding:20px;
+            background:#0b1829;
+            border:1px solid #203047;
+            border-radius:10px;
+            color:#aab7c8;
+        ">
+
+            <strong style="color:#79e6a8;">
+                ● AI SCREENING ENGINE READY
+            </strong>
+
+            <br><br>
+
+            OCR • Validation • Forensics • Biometrics
+            • Cross-Document Analysis • Risk Scoring
+
+        </div>
+
+    </section>
+
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+</body>
+
+</html>

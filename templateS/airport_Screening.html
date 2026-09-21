@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Airport Screening | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+     NAVIGATION BAR
+===================================================== -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            AI<span>SCREEN</span>
+
+        </div>
+
+
+        <div class="nav-status">
+
+            ● AIRPORT SECURITY
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+     MAIN SECTION
+===================================================== -->
+
+    <section class="sectors" style="min-height:75vh;">
+
+
+        <!-- BADGE -->
+
+        <div class="badge">
+
+            AIRPORT IDENTITY SCREENING
+
+        </div>
+
+
+
+        <!-- HEADING -->
+
+        <h1 style="
+        font-size:42px;
+        margin-bottom:15px;
+    ">
+
+            Document
+
+            <span style="color:#35d0ff;">
+
+                Screening
+
+            </span>
+
+        </h1>
+
+
+
+        <!-- DESCRIPTION -->
+
+        <p style="
+        color:#aab7c8;
+        max-width:650px;
+        margin:0 auto 40px;
+        line-height:1.6;
+    ">
+
+            Select the document type that needs to be
+            screened by the authorized officer.
+
+        </p>
+
+
+
+        <!-- =================================================
+         DOCUMENT OPTIONS
+    ================================================= -->
+
+        <div class="sector-grid">
+
+
+            <!-- =============================================
+             PASSPORT
+        ============================================== -->
+
+            <a href="/passport" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:40px;">
+
+                    🛂
+
+                </div>
+
+                <br>
+
+                <strong>
+
+                    Passport
+
+                </strong>
+
+                <p style="
+                margin-top:10px;
+                color:#8fa0b5;
+                font-size:13px;
+            ">
+
+                    Identity • Nationality • DOB • Expiry
+
+                </p>
+
+            </a>
+
+
+
+            <!-- =============================================
+             VISA
+        ============================================== -->
+
+            <a href="/visa" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:40px;">
+
+                    📄
+
+                </div>
+
+                <br>
+
+                <strong>
+
+                    Visa
+
+                </strong>
+
+                <p style="
+                margin-top:10px;
+                color:#8fa0b5;
+                font-size:13px;
+            ">
+
+                    Visa Number • Type • Validity
+
+                </p>
+
+            </a>
+
+
+
+            <!-- =============================================
+             NATIONAL ID
+        ============================================== -->
+
+            <a href="/national-id" class="sector-card" style="text-decoration:none;">
+
+                <div style="font-size:40px;">
+
+                    🪪
+
+                </div>
+
+                <br>
+
+                <strong>
+
+                    National ID
+
+                </strong>
+
+                <p style="
+                margin-top:10px;
+                color:#8fa0b5;
+                font-size:13px;
+            ">
+
+                    Identity • DOB • Personal Details
+
+                </p>
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+         SCREENING ENGINE STATUS
+    ================================================= -->
+
+        <div style="
+        margin:45px auto 0;
+        padding:20px;
+        background:#0b1829;
+        border:1px solid #203047;
+        border-radius:10px;
+        color:#aab7c8;
+        max-width:900px;
+    ">
+
+
+            <strong style="color:#79e6a8;">
+
+                ● SCREENING ENGINE READY
+
+            </strong>
+
+
+            <br>
+            <br>
+
+
+            OCR • Validation • Forensics • Face Verification
+            • Liveness • Risk Scoring
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+     FOOTER
+===================================================== -->
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Human Verification | AI Screen</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            AI<span>SCREEN</span>
+        </div>
+
+        <div class="nav-status">
+            ● SECURITY CHECK
+        </div>
+
+    </nav>
+
+
+    <section class="hero">
+
+        <div class="badge">
+            HUMAN VERIFICATION
+        </div>
+
+        <h1>
+            Verify <span>Access</span>
+        </h1>
+
+        <p>
+            Complete the verification below before
+            continuing to the secure officer console.
+        </p>
+
+
+        <form action="/override" method="GET" style="width:100%; max-width:450px;">
+
+            <div style="
+                background:#0b1829;
+                border:1px solid #203047;
+                border-radius:10px;
+                padding:25px;
+                margin-bottom:25px;
+                text-align:left;
+            ">
+
+                <label style="
+                    color:#dce7f5;
+                    font-size:16px;
+                ">
+
+                    <input type="checkbox" required style="margin-right:10px;">
+
+                    I am a human and an authorized user.
+
+                </label>
+
+            </div>
+
+
+            <button type="submit" class="start-btn" style="border:none; cursor:pointer;">
+
+                VERIFY & CONTINUE →
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <footer class="footer">
+
+        AI Identity Screening System • SIH 2026 Prototype
+
+    </footer>
+
+</body>
+
+</html>

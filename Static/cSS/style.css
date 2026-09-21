@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #07111f;
+    color: white;
+    min-height: 100vh;
+}
+
+.navbar {
+    width: 100%;
+    padding: 22px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #203047;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #35d0ff;
+}
+
+.nav-status {
+    color: #79e6a8;
+    font-size: 14px;
+}
+
+.hero {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.badge {
+    color: #35d0ff;
+    border: 1px solid #35d0ff;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.hero h1 {
+    font-size: 52px;
+    max-width: 900px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #35d0ff;
+}
+
+.hero p {
+    max-width: 650px;
+    color: #aab7c8;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 35px;
+}
+
+.start-btn {
+    display: inline-block;
+    background: #35d0ff;
+    color: #06101c;
+    text-decoration: none;
+    padding: 15px 35px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+}
+
+.sectors {
+    padding: 40px 7% 70px;
+    text-align: center;
+}
+
+.sectors h2 {
+    margin-bottom: 30px;
+}
+
+.sector-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+}
+
+.sector-card {
+    padding: 25px 15px;
+    border: 1px solid #203047;
+    border-radius: 10px;
+    background: #0b1829;
+    color: #dce7f5;
+    transition: 0.2s;
+}
+
+.sector-card:hover {
+    border-color: #35d0ff;
+    transform: translateY(-3px);
+}
+
+.footer {
+    text-align: center;
+    padding: 25px;
+    color: #718096;
+    border-top: 1px solid #203047;
+}
+
+@media (max-width: 900px) {
+    .sector-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero h1 {
+        font-size: 38px;
+    }
+}
+
+.result-box {
+    background: #07111f;
+    border: 1px solid #203047;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.result-label {
+    display: block;
+    color: #718096;
+    font-size: 12px;
+    margin-bottom: 7px;
+    text-transform: uppercase;
+}
+
+.result-box strong {
+    color: #dce7f5;
+    font-size: 15px;
+}
