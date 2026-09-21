@@ -1,0 +1,10 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Uploaded identity documents
+uploads/
+uploadS/
+
+# Environment/secrets
+.env
