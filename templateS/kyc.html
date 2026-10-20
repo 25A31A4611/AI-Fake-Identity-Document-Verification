@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>IdentityGuard AI | Banking & KYC</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        .workflow-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 5% 0%,
+                    rgba(124,58,237,0.08),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 95% 10%,
+                    rgba(37,99,235,0.07),
+                    transparent 25%
+                ),
+                #f3f7fc;
+
+            color: #142033;
+        }
+
+
+        .workflow-topbar {
+            min-height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background: rgba(7,17,31,0.98);
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.08);
+
+            box-shadow:
+                0 8px 28px rgba(7,17,31,0.16);
+        }
+
+
+        .workflow-brand {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+
+        .workflow-brand-icon {
+            width: 39px;
+            height: 39px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
+        }
+
+
+        .workflow-back {
+            color: #cbd5e1;
+
+            text-decoration: none;
+
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+
+        .workflow-back:hover {
+            color: #ffffff;
+        }
+
+
+        .workflow-container {
+            width: min(1050px,92%);
+
+            margin: 0 auto;
+
+            padding: 42px 0 70px;
+        }
+
+
+        .workflow-header {
+            margin-bottom: 24px;
+        }
+
+
+        .workflow-eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 6px 11px;
+
+            margin-bottom: 12px;
+
+            border-radius: 999px;
+
+            background: #f5f3ff;
+
+            border: 1px solid #ddd6fe;
+
+            color: #6d28d9;
+
+            font-size: 10px;
+            font-weight: 850;
+
+            letter-spacing: 0.7px;
+
+            text-transform: uppercase;
+        }
+
+
+        .workflow-header h1 {
+            margin: 0 0 9px;
+
+            color: #142033;
+
+            font-size: clamp(28px,4vw,39px);
+
+            font-weight: 900;
+
+            letter-spacing: -1px;
+        }
+
+
+        .workflow-header p {
+            max-width: 700px;
+
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+
+        .workflow-grid {
+            display: grid;
+
+            grid-template-columns: 1.25fr 0.75fr;
+
+            gap: 18px;
+        }
+
+
+        .workflow-card {
+            padding: 26px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 8px 25px rgba(15,23,42,0.045);
+        }
+
+
+        .workflow-card h2 {
+            margin: 0 0 7px;
+
+            color: #142033;
+
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+
+        .workflow-card-description {
+            margin: 0 0 22px;
+
+            color: #64748b;
+
+            font-size: 11px;
+
+            line-height: 1.7;
+        }
+
+
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+
+        .field-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #334155;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+
+        .field-group input,
+        .field-group select {
+            width: 100%;
+
+            min-height: 42px;
+
+            padding: 0 12px;
+
+            box-sizing: border-box;
+
+            border:
+                1px solid #dbe3ec;
+
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            color: #334155;
+
+            font-size: 11px;
+
+            outline: none;
+        }
+
+
+        .field-group input:focus,
+        .field-group select:focus {
+            border-color: #8b5cf6;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 3px rgba(124,58,237,0.08);
+        }
+
+
+        .upload-list {
+            display: grid;
+
+            gap: 10px;
+
+            margin-top: 18px;
+        }
+
+
+        .upload-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 12px;
+
+            padding: 13px;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 11px;
+
+            background: #f8fafc;
+        }
+
+
+        .upload-item-left {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .upload-item-icon {
+            width: 35px;
+            height: 35px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: #f5f3ff;
+
+            border: 1px solid #ddd6fe;
+
+            font-size: 16px;
+        }
+
+
+        .upload-item strong {
+            display: block;
+
+            color: #334155;
+
+            font-size: 11px;
+
+            margin-bottom: 3px;
+        }
+
+
+        .upload-item span {
+            color: #94a3b8;
+
+            font-size: 9px;
+        }
+
+
+        .upload-item-button {
+            padding: 7px 10px;
+
+            border:
+                1px solid #ddd6fe;
+
+            border-radius: 7px;
+
+            background: #ffffff;
+
+            color: #6d28d9;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+
+        .upload-item-button:hover {
+            background: #f5f3ff;
+        }
+
+
+        .workflow-button {
+            width: 100%;
+
+            min-height: 45px;
+
+            margin-top: 20px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            background: #7c3aed;
+
+            color: #ffffff;
+
+            font-size: 12px;
+
+            font-weight: 850;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 18px rgba(124,58,237,0.18);
+        }
+
+
+        .workflow-button:hover {
+            background: #6d28d9;
+        }
+
+
+        .checklist {
+            display: grid;
+
+            gap: 10px;
+        }
+
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 9px;
+
+            padding: 11px;
+
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            border: 1px solid #edf2f7;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            line-height: 1.5;
+        }
+
+
+        .check-item span {
+            color: #7c3aed;
+
+            font-weight: 900;
+        }
+
+
+        .kyc-security {
+            margin-top: 18px;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #f5f3ff
+                );
+
+            border:
+                1px solid #dbeafe;
+
+            color: #475569;
+
+            font-size: 10px;
+
+            line-height: 1.65;
+        }
+
+
+        .kyc-security strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #334155;
+
+            font-size: 11px;
+        }
+
+
+        @media (max-width:800px) {
+
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width:500px) {
+
+            .workflow-topbar {
+                padding: 0 4%;
+            }
+
+            .workflow-brand {
+                font-size: 17px;
+            }
+
+            .workflow-container {
+                width: 94%;
+                padding-top: 28px;
+            }
+
+            .workflow-card {
+                padding: 20px;
+            }
+
+            .upload-item {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="workflow-page">
+
+
+    <header class="workflow-topbar">
+
+        <div class="workflow-brand">
+
+            <span class="workflow-brand-icon">
+                🛡
+            </span>
+
+            IdentityGuard AI
+
+        </div>
+
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="workflow-back"
+        >
+            ← Back to Dashboard
+        </a>
+
+    </header>
+
+
+
+    <main class="workflow-container">
+
+
+        <section class="workflow-header">
+
+            <div class="workflow-eyebrow">
+                🏦 Banking &amp; KYC Screening
+            </div>
+
+            <h1>
+                Banking &amp; KYC Verification
+            </h1>
+
+            <p>
+                Review customer identity and supporting documentation
+                for onboarding and KYC screening workflows.
+            </p>
+
+        </section>
+
+
+
+        <section class="workflow-grid">
+
+
+            <div class="workflow-card">
+
+                <h2>
+                    Customer &amp; Documentation
+                </h2>
+
+                <p class="workflow-card-description">
+                    Enter basic customer information and prepare the
+                    documents required for identity screening.
+                </p>
+
+
+                <div class="field-group">
+
+                    <label for="customer_name">
+                        Customer Name
+                    </label>
+
+                    <input
+                        id="customer_name"
+                        type="text"
+                        placeholder="Enter customer full name"
+                    >
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label for="customer_reference">
+                        Customer Reference
+                    </label>
+
+                    <input
+                        id="customer_reference"
+                        type="text"
+                        placeholder="Optional customer reference"
+                    >
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label for="kyc_type">
+                        Verification Type
+                    </label>
+
+                    <select id="kyc_type">
+
+                        <option>
+                            Identity Verification
+                        </option>
+
+                        <option>
+                            Customer Onboarding
+                        </option>
+
+                        <option>
+                            Address Verification
+                        </option>
+
+                        <option>
+                            Enhanced KYC Review
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="upload-list">
+
+
+                    <div class="upload-item">
+
+                        <div class="upload-item-left">
+
+                            <div class="upload-item-icon">
+                                🪪
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Identity Document
+                                </strong>
+
+                                <span>
+                                    Passport, ID or other identity document
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="upload-item-button"
+                        >
+                            Upload
+                        </button>
+
+                    </div>
+
+
+
+                    <div class="upload-item">
+
+                        <div class="upload-item-left">
+
+                            <div class="upload-item-icon">
+                                🏠
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Address Proof
+                                </strong>
+
+                                <span>
+                                    Supporting address documentation
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="upload-item-button"
+                        >
+                            Upload
+                        </button>
+
+                    </div>
+
+
+
+                    <div class="upload-item">
+
+                        <div class="upload-item-left">
+
+                            <div class="upload-item-icon">
+                                📄
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Supporting Document
+                                </strong>
+
+                                <span>
+                                    Additional KYC documentation
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="upload-item-button"
+                        >
+                            Upload
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="workflow-button"
+                    onclick="alert('KYC verification workflow is ready for document processing.')"
+                >
+                    Start KYC Verification →
+                </button>
+
+            </div>
+
+
+
+            <aside class="workflow-card">
+
+                <h2>
+                    KYC Screening Checklist
+                </h2>
+
+                <p class="workflow-card-description">
+                    The KYC workflow is organized around customer
+                    identity and document screening.
+                </p>
+
+
+                <div class="checklist">
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Customer identity review
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Identity document verification
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Address documentation review
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Document consistency checking
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        AI-assisted risk assessment
+                    </div>
+
+                </div>
+
+
+                <div class="kyc-security">
+
+                    <strong>
+                        🔒 Secure KYC Review
+                    </strong>
+
+                    Automated screening is intended to assist
+                    authorized personnel with customer verification.
+                    Final review remains with the responsible officer.
+
+                </div>
+
+            </aside>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

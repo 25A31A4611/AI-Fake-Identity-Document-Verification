@@ -1,0 +1,3764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Document Screening Results</title>
+
+    <!-- Correct stylesheet path -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        /* =====================================================
+           ANALYSIS PAGE
+           Page-specific visual styling only
+        ====================================================== */
+
+        .analysis-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(37, 99, 235, 0.07),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 8%,
+                    rgba(6, 182, 212, 0.06),
+                    transparent 25%
+                ),
+                #f3f7fc;
+
+            color: #142033;
+
+            padding-bottom: 70px;
+        }
+
+
+        /* =====================================================
+           TOP BAR
+        ====================================================== */
+
+        .analysis-topbar {
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            min-height: 72px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background:
+                rgba(7, 17, 31, 0.94);
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            backdrop-filter: blur(16px);
+
+            box-shadow:
+                0 8px 28px rgba(7, 17, 31, 0.15);
+        }
+
+
+        .analysis-logo {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+
+            font-weight: 850;
+
+            letter-spacing: -0.4px;
+        }
+
+
+        .analysis-logo-mark {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
+
+            box-shadow:
+                0 7px 18px rgba(37, 99, 235, 0.28);
+
+            font-size: 20px;
+        }
+
+
+        .analysis-header-status {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 7px 12px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(34, 197, 94, 0.10);
+
+            border:
+                1px solid rgba(34, 197, 94, 0.20);
+
+            color: #bbf7d0;
+
+            font-size: 12px;
+
+            font-weight: 750;
+        }
+
+
+        .header-status-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.10);
+        }
+
+
+        /* =====================================================
+           MAIN
+        ====================================================== */
+
+        .analysis-main {
+            width: min(1180px, 92%);
+
+            margin: 0 auto;
+
+            padding-top: 38px;
+        }
+
+
+        /* =====================================================
+           INTRO
+        ====================================================== */
+
+        .analysis-intro {
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content: space-between;
+
+            gap: 25px;
+
+            margin-bottom: 28px;
+        }
+
+
+        .analysis-eyebrow {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-bottom: 10px;
+
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            background: #eff6ff;
+
+            border: 1px solid #dbeafe;
+
+            color: #2563eb;
+
+            font-size: 11px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.7px;
+        }
+
+
+        .analysis-intro h1 {
+            margin: 0 0 8px;
+
+            font-size: clamp(28px, 4vw, 39px);
+
+            line-height: 1.1;
+
+            letter-spacing: -1.3px;
+
+            font-weight: 900;
+
+            color: #07111f;
+        }
+
+
+        .analysis-intro p {
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+        }
+
+
+        .document-pill {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 10px 15px;
+
+            border-radius: 999px;
+
+            background: #ffffff;
+
+            border: 1px solid #dbe5f1;
+
+            color: #334155;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            white-space: nowrap;
+
+            box-shadow:
+                0 4px 14px rgba(15, 23, 42, 0.05);
+        }
+
+
+        /* =====================================================
+           SUMMARY CARDS
+        ====================================================== */
+
+        .screening-summary {
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 14px;
+
+            margin-bottom: 28px;
+        }
+
+
+        .summary-card {
+            position: relative;
+
+            overflow: hidden;
+
+            min-height: 125px;
+
+            padding: 18px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 16px;
+
+            box-shadow:
+                0 4px 15px rgba(15, 23, 42, 0.045);
+
+            transition:
+                transform 0.22s ease,
+                box-shadow 0.22s ease,
+                border-color 0.22s ease;
+        }
+
+
+        .summary-card::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 3px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #06b6d4
+                );
+
+            opacity: 0.8;
+        }
+
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+
+            border-color: #cbdcf7;
+
+            box-shadow:
+                0 12px 28px rgba(15, 23, 42, 0.08);
+        }
+
+
+        .summary-icon {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 13px;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ecfeff
+                );
+
+            font-size: 17px;
+        }
+
+
+        .summary-title {
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.65px;
+        }
+
+
+        .summary-value {
+            margin-top: 5px;
+
+            color: #142033;
+
+            font-size: 15px;
+
+            font-weight: 850;
+        }
+
+
+        .summary-success {
+            color: #15803d;
+        }
+
+
+        .summary-warning {
+            color: #b45309;
+        }
+
+
+        /* =====================================================
+           ANALYSIS SECTIONS
+        ====================================================== */
+
+        .analysis-section {
+            position: relative;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            padding: 27px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.045);
+
+            overflow: hidden;
+        }
+
+
+        .analysis-section::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 4px;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #2563eb,
+                    #06b6d4
+                );
+
+            opacity: 0.75;
+        }
+
+
+        .analysis-section-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding-bottom: 18px;
+
+            margin-bottom: 21px;
+
+            border-bottom:
+                1px solid #edf2f7;
+        }
+
+
+        .analysis-section-header h2 {
+            display: flex;
+
+            align-items: center;
+
+            margin: 0;
+
+            color: #142033;
+
+            font-size: 19px;
+
+            font-weight: 850;
+
+            letter-spacing: -0.3px;
+        }
+
+
+        .section-number {
+            width: 30px;
+            height: 30px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-right: 9px;
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ecfeff
+                );
+
+            border:
+                1px solid #dbeafe;
+
+            color: #2563eb;
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+            letter-spacing: 0.3px;
+        }
+
+
+        /* =====================================================
+           STATUS BADGES
+        ====================================================== */
+
+        .analysis-status {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            padding: 6px 11px;
+
+            border-radius: 999px;
+
+            font-size: 11px;
+
+            font-weight: 850;
+
+            white-space: nowrap;
+        }
+
+
+        .analysis-status.success {
+            background: #f0fdf4;
+
+            border:
+                1px solid #dcfce7;
+
+            color: #15803d;
+        }
+
+
+        .analysis-status.warning {
+            background: #fffbeb;
+
+            border:
+                1px solid #fef3c7;
+
+            color: #b45309;
+        }
+
+
+        .analysis-status.danger {
+            background: #fef2f2;
+
+            border:
+                1px solid #fee2e2;
+
+            color: #b91c1c;
+        }
+
+
+        .analysis-status.neutral {
+            background: #f8fafc;
+
+            border:
+                1px solid #e2e8f0;
+
+            color: #64748b;
+        }
+
+
+        /* =====================================================
+           DATA GRID
+        ====================================================== */
+
+        .analysis-data-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .analysis-data-item {
+            min-width: 0;
+
+            padding: 16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #f8fafc,
+                    #ffffff
+                );
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 12px;
+
+            transition:
+                border-color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .analysis-data-item:hover {
+            transform: translateY(-2px);
+
+            border-color: #cbdcf7;
+        }
+
+
+        .analysis-data-label {
+            margin-bottom: 7px;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.55px;
+        }
+
+
+        .analysis-data-value {
+            color: #142033;
+
+            font-size: 14px;
+
+            font-weight: 750;
+
+            line-height: 1.5;
+
+            word-break: break-word;
+        }
+
+
+        /* =====================================================
+           DESCRIPTION / INFORMATION BOX
+        ====================================================== */
+
+        .analysis-description {
+            margin-top: 17px;
+
+            padding: 14px 16px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid #e8edf3;
+
+            border-left:
+                3px solid #94a3b8;
+
+            border-radius: 0 11px 11px 0;
+
+            color: #475569;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        .analysis-description strong {
+            color: #142033;
+        }
+
+
+        .analysis-description ul {
+            margin: 9px 0 0 19px;
+
+            padding: 0;
+        }
+
+
+        .analysis-description li {
+            margin-bottom: 5px;
+        }
+
+
+        /* =====================================================
+           SCORE LINE
+        ====================================================== */
+
+        .analysis-score-line {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 14px;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+
+        .analysis-score-line strong {
+            color: #142033;
+
+            font-weight: 850;
+        }
+
+
+        /* =====================================================
+           VALIDATION CHECKS
+        ====================================================== */
+
+        .check-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 10px;
+        }
+
+
+        .analysis-check {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 13px 14px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 11px;
+
+            color: #334155;
+
+            font-size: 13px;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .analysis-check:hover {
+            background: #ffffff;
+
+            border-color: #cbdcf7;
+        }
+
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background: #dcfce7;
+
+            color: #15803d;
+
+            font-size: 12px;
+
+            font-weight: 900;
+        }
+
+
+        .check-icon.error {
+            background: #fee2e2;
+
+            color: #b91c1c;
+        }
+
+
+        .check-icon.optional {
+            background: #e2e8f0;
+
+            color: #64748b;
+        }
+
+
+        .analysis-check small {
+            color: #94a3b8;
+
+            font-size: 10px;
+        }
+
+
+        /* =====================================================
+           REGISTRY
+        ====================================================== */
+
+        .registry-match-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 12px;
+
+            margin-top: 16px;
+        }
+
+
+        .registry-match-item {
+            padding: 14px 16px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 11px;
+        }
+
+
+        .registry-match-item strong {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: #64748b;
+
+            font-size: 11px;
+        }
+
+
+        .registry-match-item span {
+            color: #15803d;
+
+            font-size: 13px;
+
+            font-weight: 800;
+        }
+
+
+        .registry-mismatch {
+            margin-top: 17px;
+
+            padding: 16px;
+
+            background: #fef2f2;
+
+            border:
+                1px solid #fecaca;
+
+            border-radius: 12px;
+        }
+
+
+        .registry-mismatch-title {
+            color: #991b1b;
+
+            font-size: 13px;
+
+            font-weight: 850;
+        }
+
+
+        .registry-mismatch-item {
+            margin-top: 11px;
+
+            padding-top: 11px;
+
+            border-top:
+                1px solid #fecaca;
+
+            color: #475569;
+
+            font-size: 13px;
+
+            line-height: 1.65;
+        }
+
+
+        .registry-mismatch-item b,
+        .registry-mismatch-item strong {
+            color: #991b1b;
+        }
+
+
+        .registry-review {
+            background: #fffbeb;
+
+            border-left-color: #f59e0b;
+        }
+
+
+        .registry-not-found {
+            background: #fffbeb;
+
+            border-left-color: #f59e0b;
+        }
+
+
+        /* =====================================================
+           CROSS DOCUMENT
+        ====================================================== */
+
+        .cross-document-summary {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-bottom: 16px;
+        }
+
+
+        .cross-document-card {
+            padding: 16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #f8fafc,
+                    #ffffff
+                );
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 12px;
+        }
+
+
+        .cross-document-card strong {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        .cross-document-card span {
+            color: #142033;
+
+            font-size: 16px;
+
+            font-weight: 900;
+        }
+
+
+        .cross-document-consistent {
+            background: #f0fdf4;
+
+            border-color: #bbf7d0;
+
+            border-left-color: #22c55e;
+
+            color: #15803d;
+        }
+
+
+        .cross-document-mismatch {
+            background: #fef2f2;
+
+            border-color: #fecaca;
+
+            border-left-color: #ef4444;
+
+            color: #b91c1c;
+        }
+
+
+        .cross-document-review {
+            background: #fffbeb;
+
+            border-color: #fed7aa;
+
+            border-left-color: #f59e0b;
+
+            color: #b45309;
+        }
+
+
+        .cross-document-fields {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 12px;
+
+            margin-top: 16px;
+        }
+
+
+        .cross-document-field {
+            padding: 14px 16px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 11px;
+        }
+
+
+        .cross-document-field strong {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: #64748b;
+
+            font-size: 11px;
+        }
+
+
+        .cross-document-field span {
+            color: #15803d;
+
+            font-size: 13px;
+
+            font-weight: 800;
+        }
+
+
+        .cross-document-field small {
+            color: #94a3b8;
+
+            font-size: 10px;
+        }
+
+
+        .cross-document-mismatch-box {
+            margin-top: 17px;
+
+            padding: 16px;
+
+            background: #fef2f2;
+
+            border:
+                1px solid #fecaca;
+
+            border-radius: 12px;
+        }
+
+
+        .cross-document-mismatch-title {
+            margin-bottom: 9px;
+
+            color: #991b1b;
+
+            font-size: 13px;
+
+            font-weight: 850;
+        }
+
+
+        .cross-document-mismatch-item {
+            margin-top: 10px;
+
+            padding-top: 10px;
+
+            border-top:
+                1px solid #fecaca;
+
+            color: #475569;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .cross-document-mismatch-item b {
+            color: #991b1b;
+        }
+
+
+        .cross-document-document-name {
+            color: #64748b;
+
+            font-weight: 750;
+        }
+
+
+        /* =====================================================
+           FACE VERIFICATION
+        ====================================================== */
+
+        .face-score-panel {
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+
+            margin-top: 16px;
+
+            padding: 19px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ecfeff
+                );
+
+            border:
+                1px solid #dbeafe;
+
+            border-radius: 13px;
+        }
+
+
+        .face-score-number {
+            color: #2563eb;
+
+            font-size: 34px;
+
+            font-weight: 900;
+
+            letter-spacing: -1px;
+        }
+
+
+        .face-score-label {
+            color: #64748b;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.4px;
+        }
+
+
+        /* =====================================================
+           RISK ASSESSMENT
+        ====================================================== */
+
+        .risk-section {
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ffffff 0%,
+                    #f5f9ff 100%
+                );
+
+            border:
+                1px solid #cfe0f5;
+
+            border-radius: 20px;
+
+            padding: 29px;
+
+            margin-bottom: 22px;
+
+            box-shadow:
+                0 12px 35px rgba(37, 99, 235, 0.08);
+        }
+
+
+        .risk-section::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 4px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #06b6d4
+                );
+        }
+
+
+        .risk-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 27px;
+        }
+
+
+        .risk-header h2 {
+            margin: 0;
+
+            color: #142033;
+
+            font-size: 21px;
+
+            font-weight: 900;
+        }
+
+
+        .risk-main {
+            display: grid;
+
+            grid-template-columns: 180px 1fr;
+
+            align-items: center;
+
+            gap: 30px;
+        }
+
+
+        .risk-score-ring {
+            width: 155px;
+            height: 155px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    #ffffff 55%,
+                    transparent 56%
+                );
+
+            border:
+                12px solid #dbeafe;
+
+            box-shadow:
+                inset 0 0 0 1px #bfdbfe,
+                0 10px 28px rgba(37, 99, 235, 0.10);
+
+            color: #142033;
+
+            font-size: 27px;
+
+            font-weight: 900;
+        }
+
+
+        .risk-information h3 {
+            margin: 0 0 9px;
+
+            color: #15803d;
+
+            font-size: 28px;
+
+            font-weight: 900;
+        }
+
+
+        .risk-information p {
+            max-width: 650px;
+
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+
+        .risk-factors {
+            margin-top: 25px;
+
+            padding: 17px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 12px;
+        }
+
+
+        .risk-factors strong {
+            color: #142033;
+
+            font-size: 13px;
+
+            font-weight: 850;
+        }
+
+
+        .risk-factors ul {
+            margin: 10px 0 0 19px;
+
+            padding: 0;
+
+            color: #475569;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        .risk-engine {
+            margin-top: 15px;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           RISK BREAKDOWN
+        ====================================================== */
+
+        .risk-breakdown {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 11px;
+
+            margin-top: 20px;
+        }
+
+
+        .risk-breakdown-item {
+            padding: 13px 14px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 10px;
+        }
+
+
+        .risk-breakdown-label {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.4px;
+        }
+
+
+        .risk-breakdown-value {
+            color: #142033;
+
+            font-size: 16px;
+
+            font-weight: 900;
+        }
+
+
+        .risk-breakdown-value.negative {
+            color: #15803d;
+        }
+
+
+        .risk-floor {
+            margin-top: 12px;
+
+            padding: 11px 13px;
+
+            background: #fffbeb;
+
+            border:
+                1px solid #fef3c7;
+
+            border-radius: 9px;
+
+            color: #92400e;
+
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           OFFICER DECISION
+        ====================================================== */
+
+        .decision-panel {
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f,
+                    #102238
+                );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 29px;
+
+            margin-top: 8px;
+
+            box-shadow:
+                0 15px 35px rgba(7, 17, 31, 0.18);
+        }
+
+
+        .decision-panel::after {
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            right: -140px;
+            bottom: -180px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(6, 182, 212, 0.15),
+                    transparent 68%
+                );
+
+            pointer-events: none;
+        }
+
+
+        .decision-panel h2 {
+            position: relative;
+
+            z-index: 1;
+
+            margin: 0 0 7px;
+
+            font-size: 21px;
+
+            font-weight: 900;
+        }
+
+
+        .decision-panel p {
+            position: relative;
+
+            z-index: 1;
+
+            margin: 0 0 22px;
+
+            color: #cbd5e1;
+
+            font-size: 13px;
+        }
+
+
+        .decision-actions {
+            position: relative;
+
+            z-index: 2;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .decision-actions button {
+            padding: 14px 18px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+
+            font-weight: 850;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+
+        .decision-actions button:hover {
+            transform: translateY(-2px);
+
+            opacity: 0.94;
+
+            box-shadow:
+                0 10px 22px rgba(0, 0, 0, 0.20);
+        }
+
+
+        .approve-button-new {
+            background: #22c55e;
+
+            color: white;
+        }
+
+
+        .review-button-new {
+            background: #f59e0b;
+
+            color: white;
+        }
+
+
+        .reject-button-new {
+            background: #ef4444;
+
+            color: white;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 1050px) {
+
+            .screening-summary {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+            .analysis-data-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .risk-breakdown {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 760px) {
+
+            .analysis-topbar {
+                padding: 0 4%;
+            }
+
+
+            .analysis-header-status {
+                display: none;
+            }
+
+
+            .analysis-main {
+                width: 94%;
+
+                padding-top: 25px;
+            }
+
+
+            .analysis-intro {
+                display: block;
+            }
+
+
+            .analysis-intro h1 {
+                font-size: 27px;
+            }
+
+
+            .document-pill {
+                margin-top: 15px;
+            }
+
+
+            .screening-summary {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .analysis-section,
+            .risk-section,
+            .decision-panel {
+                padding: 21px;
+            }
+
+
+            .analysis-data-grid,
+            .check-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .cross-document-summary,
+            .cross-document-fields {
+                grid-template-columns: 1fr;
+            }
+
+
+            .risk-main {
+                grid-template-columns: 1fr;
+
+                text-align: center;
+            }
+
+
+            .risk-score-ring {
+                margin: 0 auto;
+            }
+
+
+            .risk-information p {
+                margin: 0 auto;
+            }
+
+
+            .risk-breakdown {
+                grid-template-columns: 1fr;
+            }
+
+
+            .decision-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+
+            .screening-summary {
+                grid-template-columns: 1fr;
+            }
+
+
+            .analysis-section-header,
+            .risk-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .analysis-section-header h2 {
+                font-size: 17px;
+            }
+
+
+            .analysis-intro h1 {
+                font-size: 24px;
+            }
+
+
+            .face-score-panel {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+        }
+
+
+        /* =====================================================
+           ACCESSIBILITY
+        ====================================================== */
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline:
+                3px solid rgba(59, 130, 246, 0.30);
+
+            outline-offset: 3px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="analysis-page">
+
+
+    <!-- =====================================================
+         TOP HEADER
+    ====================================================== -->
+
+    <header class="analysis-topbar">
+
+        <div class="analysis-logo">
+
+            <span class="analysis-logo-mark">
+                🛡
+            </span>
+
+            IdentityGuard AI
+
+        </div>
+
+
+        <div class="analysis-header-status">
+
+            <span class="header-status-dot"></span>
+
+            AI Screening Completed
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="analysis-main">
+
+
+        <!-- =================================================
+             INTRO
+        ================================================== -->
+
+        <div class="analysis-intro">
+
+            <div>
+
+                <div class="analysis-eyebrow">
+                    ✦ Intelligent Identity Screening
+                </div>
+
+                <h1>
+                    AI Document Screening Results
+                </h1>
+
+                <p>
+                    Automated identity and document verification analysis
+                </p>
+
+            </div>
+
+
+            <div class="document-pill">
+
+                📄
+
+                Document:
+
+                {{ document_type }}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SCREENING SUMMARY
+        ================================================== -->
+
+        <div class="screening-summary">
+
+
+            <!-- OCR -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    🔤
+                </div>
+
+                <div class="summary-title">
+                    OCR
+                </div>
+
+                <div class="summary-value summary-success">
+                    ✓ Completed
+                </div>
+
+            </div>
+
+
+
+            <!-- VALIDATION -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    📋
+                </div>
+
+                <div class="summary-title">
+                    Validation
+                </div>
+
+                <div class="summary-value
+                    {% if validation_result.status == 'VALID' %}
+                        summary-success
+                    {% else %}
+                        summary-warning
+                    {% endif %}
+                ">
+
+                    {{ validation_result.score }}/100
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TAMPERING -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    🔍
+                </div>
+
+                <div class="summary-title">
+                    Tampering
+                </div>
+
+                <div class="summary-value
+                    {% if tampering_result.status == 'LOW RISK' %}
+                        summary-success
+                    {% else %}
+                        summary-warning
+                    {% endif %}
+                ">
+
+                    {{ tampering_result.status }}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FACE -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    👤
+                </div>
+
+                <div class="summary-title">
+                    Face
+                </div>
+
+                <div class="summary-value
+                    {% if face_result.status == 'MATCH' %}
+                        summary-success
+                    {% else %}
+                        summary-warning
+                    {% endif %}
+                ">
+
+                    {{ face_result.score }}%
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LIVENESS -->
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    🛡
+                </div>
+
+                <div class="summary-title">
+                    Liveness
+                </div>
+
+                <div class="summary-value
+                    {% if liveness_result.status == 'LIVE' %}
+                        summary-success
+                    {% else %}
+                        summary-warning
+                    {% endif %}
+                ">
+
+                    {{ liveness_result.score }}/100
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             01 — OCR EXTRACTION
+        ================================================== -->
+
+        <section class="analysis-section">
+
+
+            <div class="analysis-section-header">
+
+                <h2>
+
+                    <span class="section-number">
+                        01
+                    </span>
+
+                    🔤 OCR Extraction
+
+                </h2>
+
+
+                <span class="analysis-status success">
+                    ✓ Completed
+                </span>
+
+            </div>
+
+
+
+            <div class="analysis-data-grid">
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Full Name
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ extracted_data.name or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Document Number
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ extracted_data.document_number or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Nationality
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ extracted_data.nationality or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Date of Birth
+                    </div>
+
+                    <div class="analysis-data-value">
+
+                        {{
+                            extracted_data.date_of_birth
+                            or extracted_data.dob
+                            or "Not detected"
+                        }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Gender
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ extracted_data.gender or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Expiry Date
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ extracted_data.expiry_date or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Address
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ extracted_data.address or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    OCR Status:
+                </strong>
+
+                The information above was extracted from the
+                uploaded document using OpenCV preprocessing
+                and Tesseract OCR.
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             02 — DOCUMENT VALIDATION
+        ================================================== -->
+
+        <section class="analysis-section">
+
+
+            <div class="analysis-section-header">
+
+                <h2>
+
+                    <span class="section-number">
+                        02
+                    </span>
+
+                    📋 Document Validation
+
+                </h2>
+
+
+                {% if validation_result.status == "VALID" %}
+
+                <span class="analysis-status success">
+                    ✓ {{ validation_result.status }}
+                </span>
+
+                {% elif validation_result.status == "REVIEW" %}
+
+                <span class="analysis-status warning">
+                    ⚠ {{ validation_result.status }}
+                </span>
+
+                {% else %}
+
+                <span class="analysis-status danger">
+                    ✕ {{ validation_result.status }}
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="analysis-score-line">
+
+                <strong>
+                    Validation Score
+                </strong>
+
+                <span>
+                    {{ validation_result.score }}/100
+                </span>
+
+            </div>
+
+
+
+            <div class="check-grid">
+
+                {% for check in validation_result.checks %}
+
+                <div class="analysis-check">
+
+                    {% if check.status is sameas true %}
+
+                    <span class="check-icon">
+                        ✓
+                    </span>
+
+                    {% elif check.status is sameas false %}
+
+                    <span class="check-icon error">
+                        ✕
+                    </span>
+
+                    {% else %}
+
+                    <span class="check-icon optional">
+                        —
+                    </span>
+
+                    {% endif %}
+
+
+                    <span>
+
+                        {{ check.label }}
+
+                        {% if check.optional %}
+
+                        <small>
+                            (Optional)
+                        </small>
+
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            {% if validation_result.reasons %}
+
+            <div class="analysis-description">
+
+                <strong>
+                    ⚠ Validation Notes:
+                </strong>
+
+                <ul>
+
+                    {% for reason in validation_result.reasons %}
+
+                    <li>
+                        {{ reason }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            {% else %}
+
+            <div class="analysis-description">
+
+                <strong>
+                    ✓ Validation Passed:
+                </strong>
+
+                All required document fields
+                passed validation.
+
+            </div>
+
+            {% endif %}
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Prototype Note:
+                </strong>
+
+                Validation results are generated dynamically
+                from the information extracted using OCR.
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             03 — REGISTRY VERIFICATION
+        ================================================== -->
+
+        <section class="analysis-section">
+
+
+            <div class="analysis-section-header">
+
+                <h2>
+
+                    <span class="section-number">
+                        03
+                    </span>
+
+                    🗃 Registry Verification
+
+                </h2>
+
+
+                {% set registry = registry_result|default({}) %}
+
+                {% set registry_status =
+                    registry.get('status', 'REVIEW')
+                %}
+
+
+                {% if registry_status == "VERIFIED" %}
+
+                <span class="analysis-status success">
+                    ✓ VERIFIED
+                </span>
+
+                {% elif registry_status == "MISMATCH" %}
+
+                <span class="analysis-status danger">
+                    ✕ MISMATCH
+                </span>
+
+                {% elif registry_status == "NOT FOUND" %}
+
+                <span class="analysis-status warning">
+                    ⚠ NOT FOUND
+                </span>
+
+                {% else %}
+
+                <span class="analysis-status neutral">
+                    — REVIEW
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="analysis-description
+                {% if registry_status == 'REVIEW' %}
+                    registry-review
+                {% elif registry_status == 'NOT FOUND' %}
+                    registry-not-found
+                {% endif %}
+            ">
+
+                <strong>
+                    Registry Status:
+                </strong>
+
+                {{ registry.get(
+                    'message',
+                    'Registry verification requires manual review.'
+                ) }}
+
+            </div>
+
+
+
+            {% set matched_fields =
+                registry.get('matched_fields', [])
+            %}
+
+
+            {% if matched_fields %}
+
+            <div class="analysis-description">
+
+                <strong>
+                    ✓ Matched Registered Fields
+                </strong>
+
+            </div>
+
+
+            <div class="registry-match-grid">
+
+                {% for field in matched_fields %}
+
+                <div class="registry-match-item">
+
+                    <strong>
+                        {{ field.get('field', 'Field') }}
+                    </strong>
+
+                    <span>
+                        ✓ {{ field.get('value', 'Not available') }}
+                    </span>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+
+            {% set mismatched_fields =
+                registry.get('mismatched_fields', [])
+            %}
+
+
+            {% if mismatched_fields %}
+
+            <div class="registry-mismatch">
+
+                <div class="registry-mismatch-title">
+                    ✕ Registry Mismatch Detected
+                </div>
+
+
+                {% for field in mismatched_fields %}
+
+                <div class="registry-mismatch-item">
+
+                    <b>
+                        {{ field.get(
+                            'field',
+                            'Unknown Field'
+                        ) }}
+                    </b>
+
+                    <br>
+
+                    OCR Value:
+
+                    <strong>
+                        {{ field.get(
+                            'extracted',
+                            'Not available'
+                        ) }}
+                    </strong>
+
+                    <br>
+
+                    Registered Value:
+
+                    <strong>
+                        {{ field.get(
+                            'registered',
+                            'Not available'
+                        ) }}
+                    </strong>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+
+            {% if registry_status == "NOT FOUND" %}
+
+            <div class="analysis-description registry-not-found">
+
+                <strong>
+                    ⚠ Registry Information:
+                </strong>
+
+                No matching authorized record was found
+                for this document number.
+
+                <br><br>
+
+                Registry absence alone does not establish
+                that a document is forged. Manual verification
+                may be required.
+
+            </div>
+
+            {% endif %}
+
+
+
+            {% if registry_status == "REVIEW"
+                and not matched_fields
+                and not mismatched_fields %}
+
+            <div class="analysis-description registry-review">
+
+                <strong>
+                    ⚠ Manual Review Required:
+                </strong>
+
+                Sufficient registry information was not
+                available to complete an automated comparison.
+
+            </div>
+
+            {% endif %}
+
+
+
+            {% set registered_document =
+                registry.get('registered_document')
+            %}
+
+
+            {% if registered_document %}
+
+            <div class="analysis-description">
+
+                <strong>
+                    🗂 Authorized Registry Record
+                </strong>
+
+                <br><br>
+
+                Registry record found for document number:
+
+                <strong>
+                    {{ registered_document.get(
+                        'document_number',
+                        'Not available'
+                    ) }}
+                </strong>
+
+            </div>
+
+            {% endif %}
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Registry Verification:
+                </strong>
+
+                OCR-extracted document information is compared
+                field-by-field with the authorized document
+                registry.
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             04 — CROSS DOCUMENT CONSISTENCY
+        ================================================== -->
+
+        <section class="analysis-section">
+
+
+            <div class="analysis-section-header">
+
+                <h2>
+
+                    <span class="section-number">
+                        04
+                    </span>
+
+                    🔗 Cross-Document Consistency
+
+                </h2>
+
+
+                {% set cross_document =
+                    cross_document_result|default({})
+                %}
+
+                {% set cross_status =
+                    cross_document.get(
+                        'status',
+                        'NOT PROVIDED'
+                    )
+                %}
+
+
+                {% if cross_status == "CONSISTENT" %}
+
+                <span class="analysis-status success">
+                    ✓ CONSISTENT
+                </span>
+
+                {% elif cross_status == "MISMATCH" %}
+
+                <span class="analysis-status danger">
+                    ✕ MISMATCH
+                </span>
+
+                {% elif cross_status == "REVIEW" %}
+
+                <span class="analysis-status warning">
+                    ⚠ REVIEW
+                </span>
+
+                {% else %}
+
+                <span class="analysis-status neutral">
+                    — NOT PROVIDED
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            {% if cross_status == "CONSISTENT" %}
+
+            <div class="analysis-description cross-document-consistent">
+
+                <strong>
+                    ✓ Consistency Check Passed:
+                </strong>
+
+                {{ cross_document.get(
+                    'message',
+                    'The available identity information is consistent across the submitted documents.'
+                ) }}
+
+            </div>
+
+            {% elif cross_status == "MISMATCH" %}
+
+            <div class="analysis-description cross-document-mismatch">
+
+                <strong>
+                    ✕ Cross-Document Mismatch Detected:
+                </strong>
+
+                {{ cross_document.get(
+                    'message',
+                    'One or more identity fields do not match across the submitted documents.'
+                ) }}
+
+            </div>
+
+            {% elif cross_status == "REVIEW" %}
+
+            <div class="analysis-description cross-document-review">
+
+                <strong>
+                    ⚠ Manual Review Required:
+                </strong>
+
+                {{ cross_document.get(
+                    'message',
+                    'The available documents could not be fully compared.'
+                ) }}
+
+            </div>
+
+            {% else %}
+
+            <div class="analysis-description">
+
+                <strong>
+                    ℹ Cross-Document Check:
+                </strong>
+
+                {{ cross_document.get(
+                    'message',
+                    'No second document was provided for cross-document consistency verification.'
+                ) }}
+
+            </div>
+
+            {% endif %}
+
+
+
+            <div class="cross-document-summary">
+
+
+                <div class="cross-document-card">
+
+                    <strong>
+                        Documents Checked
+                    </strong>
+
+                    <span>
+                        {{ cross_document.get(
+                            'documents_checked',
+                            1
+                        ) }}
+                    </span>
+
+                </div>
+
+
+                <div class="cross-document-card">
+
+                    <strong>
+                        Matched Fields
+                    </strong>
+
+                    <span>
+                        {{ cross_document.get(
+                            'matched_fields',
+                            []
+                        )|length }}
+                    </span>
+
+                </div>
+
+
+                <div class="cross-document-card">
+
+                    <strong>
+                        Risk Contribution
+                    </strong>
+
+                    <span>
+                        +{{ cross_document.get(
+                            'risk_points',
+                            0
+                        ) }}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            {% set cross_matched_fields =
+                cross_document.get(
+                    'matched_fields',
+                    []
+                )
+            %}
+
+
+            {% if cross_matched_fields %}
+
+            <div class="analysis-description">
+
+                <strong>
+                    ✓ Matched Identity Fields
+                </strong>
+
+            </div>
+
+
+            <div class="cross-document-fields">
+
+                {% for field in cross_matched_fields %}
+
+                <div class="cross-document-field">
+
+                    <strong>
+
+                        {{ field.get(
+                            'label',
+                            field.get(
+                                'field',
+                                'Field'
+                            )
+                        ) }}
+
+                    </strong>
+
+                    <span>
+
+                        ✓
+
+                        {{ field.get(
+                            'value',
+                            'Matched'
+                        ) }}
+
+                    </span>
+
+
+                    {% if field.get('documents') %}
+
+                    <br>
+
+                    <small>
+
+                        Documents:
+
+                        {{ field.get(
+                            'documents'
+                        )|join(', ') }}
+
+                    </small>
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+
+            {% set cross_mismatched_fields =
+                cross_document.get(
+                    'mismatched_fields',
+                    []
+                )
+            %}
+
+
+            {% if cross_mismatched_fields %}
+
+            <div class="cross-document-mismatch-box">
+
+                <div class="cross-document-mismatch-title">
+                    ✕ Identity Field Mismatches
+                </div>
+
+
+                {% for field in cross_mismatched_fields %}
+
+                <div class="cross-document-mismatch-item">
+
+                    <b>
+
+                        {{ field.get(
+                            'label',
+                            field.get(
+                                'field',
+                                'Unknown Field'
+                            )
+                        ) }}
+
+                    </b>
+
+
+                    {% if field.get('values') %}
+
+                    {% for item in field.get('values') %}
+
+                    <br>
+
+                    <span class="cross-document-document-name">
+
+                        {{ item.get(
+                            'document_type',
+                            'Document'
+                        ) }}:
+
+                    </span>
+
+                    <strong>
+
+                        {{ item.get(
+                            'value',
+                            'Not available'
+                        ) }}
+
+                    </strong>
+
+                    {% endfor %}
+
+                    {% else %}
+
+                    <br>
+
+                    Document values could not be displayed.
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+
+            {% if comparison_document_filename %}
+
+            <div class="analysis-description">
+
+                <strong>
+                    📄 Comparison Document:
+                </strong>
+
+                {{ comparison_document_filename }}
+
+
+                {% if comparison_extracted_data %}
+
+                <br><br>
+
+                <strong>
+                    Extracted Identity:
+                </strong>
+
+                {{ comparison_extracted_data.name
+                    or "Name not detected" }}
+
+
+                {% if comparison_extracted_data.document_number %}
+
+                ·
+
+                {{ comparison_extracted_data.document_number }}
+
+                {% endif %}
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Cross-Document Analysis:
+                </strong>
+
+                The system compares OCR-extracted identity
+                fields from multiple documents to identify
+                inconsistent information such as name, date of
+                birth, gender, or nationality.
+
+            </div>
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Prototype Note:
+                </strong>
+
+                A mismatch produces an additional consistency
+                risk signal and can support manual review.
+                The consistency result does not independently
+                establish document fraud.
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             05 — TAMPERING DETECTION
+        ================================================== -->
+
+        <section class="analysis-section">
+
+
+            <div class="analysis-section-header">
+
+                <h2>
+
+                    <span class="section-number">
+                        05
+                    </span>
+
+                    🔍 Tampering Detection
+
+                </h2>
+
+
+                {% if tampering_result.status == "LOW RISK" %}
+
+                <span class="analysis-status success">
+                    ✓ {{ tampering_result.status }}
+                </span>
+
+                {% elif tampering_result.status == "MEDIUM RISK" %}
+
+                <span class="analysis-status warning">
+                    ⚠ {{ tampering_result.status }}
+                </span>
+
+                {% else %}
+
+                <span class="analysis-status danger">
+                    ✕ {{ tampering_result.status }}
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="analysis-score-line">
+
+                <strong>
+                    Tampering Risk Score
+                </strong>
+
+                <span>
+                    {{ tampering_result.score }}/100
+                </span>
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <ul>
+
+                    {% for reason in tampering_result.reasons %}
+
+                    <li>
+
+                        {% if tampering_result.status == "LOW RISK" %}
+
+                        ✓
+
+                        {% elif tampering_result.status == "MEDIUM RISK" %}
+
+                        ⚠
+
+                        {% else %}
+
+                        ✕
+
+                        {% endif %}
+
+                        {{ reason }}
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+
+
+            <div class="analysis-data-grid">
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        ELA Analysis Score
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ tampering_result.ela_score }}/100
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Suspicious Pixel Ratio
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ tampering_result.suspicious_ratio }}%
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Edge Concentration
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ tampering_result.edge_ratio }}%
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Image Detail Variance
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ tampering_result.laplacian_variance }}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Analysis Method:
+                </strong>
+
+                OpenCV-based image consistency analysis and
+                Error Level Analysis (ELA) were used as
+                prototype forensic signals.
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Prototype Note:
+                </strong>
+
+                Tampering detection identifies suspicious
+                image-level inconsistencies. It does not
+                independently prove that a document is forged.
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             06 — FACE VERIFICATION
+        ================================================== -->
+
+        <section class="analysis-section">
+
+
+            <div class="analysis-section-header">
+
+                <h2>
+
+                    <span class="section-number">
+                        06
+                    </span>
+
+                    👤 Face Verification
+
+                </h2>
+
+
+                {% if face_result.status == "MATCH" %}
+
+                <span class="analysis-status success">
+                    ✓ MATCH
+                </span>
+
+                {% elif face_result.status == "REVIEW" %}
+
+                <span class="analysis-status warning">
+                    ⚠ REVIEW
+                </span>
+
+                {% elif face_result.status == "NOT PROVIDED" %}
+
+                <span class="analysis-status neutral">
+                    — NOT PROVIDED
+                </span>
+
+                {% else %}
+
+                <span class="analysis-status danger">
+                    ✕ NO MATCH
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Verification Status:
+                </strong>
+
+                {{ face_result.reason }}
+
+            </div>
+
+
+
+            <div class="face-score-panel">
+
+                <div class="face-score-number">
+
+                    {{ face_result.score }}%
+
+                </div>
+
+                <div class="face-score-label">
+
+                    Face Match Score
+
+                </div>
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Analysis:
+                </strong>
+
+                The verification image was processed against
+                the uploaded document image.
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             07 — LIVENESS DETECTION
+        ================================================== -->
+
+        <section class="analysis-section">
+
+
+            <div class="analysis-section-header">
+
+                <h2>
+
+                    <span class="section-number">
+                        07
+                    </span>
+
+                    🛡 Liveness Detection
+
+                </h2>
+
+
+                {% if liveness_result.status == "LIVE" %}
+
+                <span class="analysis-status success">
+                    ✓ LIVE
+                </span>
+
+                {% elif liveness_result.status == "REVIEW" %}
+
+                <span class="analysis-status warning">
+                    ⚠ REVIEW
+                </span>
+
+                {% elif liveness_result.status == "NOT PROVIDED" %}
+
+                <span class="analysis-status neutral">
+                    — NOT PROVIDED
+                </span>
+
+                {% else %}
+
+                <span class="analysis-status danger">
+                    ✕ SPOOF
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Liveness Status:
+                </strong>
+
+                {{ liveness_result.reason }}
+
+            </div>
+
+
+
+            <div class="analysis-data-grid">
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Liveness Score
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ liveness_result.score }}/100
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Image Sharpness
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ liveness_result.sharpness }}
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Image Contrast
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ liveness_result.contrast }}
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-data-item">
+
+                    <div class="analysis-data-label">
+                        Texture Score
+                    </div>
+
+                    <div class="analysis-data-value">
+                        {{ liveness_result.texture }}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Analysis:
+                </strong>
+
+                The verification image was analyzed using
+                image sharpness, contrast, and texture
+                signals to identify possible spoofing
+                indicators.
+
+            </div>
+
+
+
+            <div class="analysis-description">
+
+                <strong>
+                    Prototype Note:
+                </strong>
+
+                This module provides a prototype-level
+                liveness signal based on image
+                characteristics. A production system would
+                use multi-frame video, facial movement,
+                challenge-response, or a trained
+                anti-spoofing model.
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             AI RISK ASSESSMENT
+        ================================================== -->
+
+        <section class="risk-section">
+
+
+            <div class="risk-header">
+
+                <h2>
+                    ⚠ AI Risk Assessment
+                </h2>
+
+
+                {% if risk_result.level == "LOW RISK" %}
+
+                <span class="analysis-status success">
+                    ✓ LOW RISK
+                </span>
+
+                {% elif risk_result.level == "MEDIUM RISK" %}
+
+                <span class="analysis-status warning">
+                    ⚠ MEDIUM RISK
+                </span>
+
+                {% else %}
+
+                <span class="analysis-status danger">
+                    ✕ HIGH RISK
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="risk-main">
+
+
+                <div class="risk-score-ring">
+
+                    {{ risk_result.score }}/100
+
+                </div>
+
+
+                <div class="risk-information">
+
+                    <h3>
+                        {{ risk_result.level }}
+                    </h3>
+
+
+                    <p>
+
+                        {% if risk_result.level == "LOW RISK" %}
+
+                        All major screening signals passed.
+                        The document and identity verification
+                        results indicate low overall risk.
+
+                        {% elif risk_result.level == "MEDIUM RISK" %}
+
+                        Some verification signals require
+                        additional review before a final decision.
+
+                        {% else %}
+
+                        Significant risk signals were detected.
+                        Manual officer review is strongly recommended.
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="risk-factors">
+
+                <strong>
+                    Risk Factors
+                </strong>
+
+
+                <ul>
+
+                    {% for reason in risk_result.reasons %}
+
+                    <li>
+                        {{ reason }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+
+
+            <!-- Risk breakdown from risk_engine.py -->
+
+            {% set risk_breakdown =
+                risk_result.get('risk_breakdown', {})
+            %}
+
+
+            {% if risk_breakdown %}
+
+            <div class="risk-breakdown">
+
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Document Validation
+                    </span>
+
+                    <span class="risk-breakdown-value">
+                        {{ risk_breakdown.get(
+                            'document_validation',
+                            0
+                        ) }}
+                    </span>
+
+                </div>
+
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Tampering
+                    </span>
+
+                    <span class="risk-breakdown-value">
+                        {{ risk_breakdown.get(
+                            'tampering',
+                            0
+                        ) }}
+                    </span>
+
+                </div>
+
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Face Verification
+                    </span>
+
+                    <span class="risk-breakdown-value">
+
+                        {{ risk_breakdown.get(
+                            'face_verification',
+                            0
+                        ) }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Liveness
+                    </span>
+
+                    <span class="risk-breakdown-value">
+
+                        {{ risk_breakdown.get(
+                            'liveness',
+                            0
+                        ) }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Registry
+                    </span>
+
+                    <span class="risk-breakdown-value">
+
+                        {{ risk_breakdown.get(
+                            'registry',
+                            0
+                        ) }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Cross-Document
+                    </span>
+
+                    <span class="risk-breakdown-value">
+
+                        {{ risk_breakdown.get(
+                            'cross_document',
+                            0
+                        ) }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Component Risk Score
+                    </span>
+
+                    <span class="risk-breakdown-value">
+
+                        {{ risk_breakdown.get(
+                            'component_risk_score',
+                            0
+                        ) }}
+
+                    </span>
+
+                </div>
+
+
+                {% if risk_breakdown.get(
+                    'safety_floor_adjustment',
+                    0
+                ) > 0 %}
+
+                <div class="risk-breakdown-item">
+
+                    <span class="risk-breakdown-label">
+                        Safety Floor Adjustment
+                    </span>
+
+                    <span class="risk-breakdown-value">
+
+                        +{{ risk_breakdown.get(
+                            'safety_floor_adjustment',
+                            0
+                        ) }}
+
+                    </span>
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+            {% endif %}
+
+
+
+            <div class="risk-engine">
+
+                <strong>
+                    Risk Engine:
+                </strong>
+
+                The prototype combines document validation,
+                registry verification,
+                cross-document consistency,
+                image tampering analysis, face verification,
+                and liveness detection results to calculate
+                an overall identity screening risk score.
+
+
+                {% if risk_result.cross_document_status is defined %}
+
+                <br><br>
+
+                <strong>
+                    Cross-Document Signal:
+                </strong>
+
+                {{ risk_result.cross_document_status }}
+
+
+                {% if risk_result.cross_document_risk_points is defined %}
+
+                · Additional consistency points:
+
+                +{{ risk_result.cross_document_risk_points }}
+
+                {% endif %}
+
+                {% endif %}
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             OFFICER DECISION
+        ================================================== -->
+
+        <section class="decision-panel">
+
+
+            <h2>
+                👮 Officer Decision
+            </h2>
+
+
+            <p>
+                Final authority remains with the authorized officer.
+            </p>
+
+
+            <form
+                action="{{ url_for('decision') }}"
+                method="POST"
+                class="decision-actions"
+            >
+
+                <input
+                    type="hidden"
+                    name="document_type"
+                    value="{{ document_type }}"
+                >
+
+
+                <button
+                    type="submit"
+                    name="decision"
+                    value="approve"
+                    class="approve-button-new"
+                >
+                    ✓ Approve
+                </button>
+
+
+                <button
+                    type="submit"
+                    name="decision"
+                    value="review"
+                    class="review-button-new"
+                >
+                    ⚠ Manual Review
+                </button>
+
+
+                <button
+                    type="submit"
+                    name="decision"
+                    value="reject"
+                    class="reject-button-new"
+                >
+                    ✕ Reject
+                </button>
+
+            </form>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

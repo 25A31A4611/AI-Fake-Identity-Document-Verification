@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>IdentityGuard AI | Screening Results</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =====================================================
+           RESULTS PAGE
+           Visual redesign only
+        ====================================================== */
+
+        .results-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(37, 99, 235, 0.08),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(6, 182, 212, 0.07),
+                    transparent 28%
+                ),
+                #f3f7fc;
+
+            padding-bottom: 70px;
+
+            color: #142033;
+        }
+
+
+        /* =====================================================
+           TOP NAVIGATION
+        ====================================================== */
+
+        .results-topbar {
+            min-height: 72px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background:
+                rgba(7, 17, 31, 0.96);
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 8px 28px rgba(7, 17, 31, 0.15);
+        }
+
+
+        .results-brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+
+            font-weight: 850;
+        }
+
+
+        .results-brand-icon {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
+
+            box-shadow:
+                0 7px 18px rgba(37, 99, 235, 0.30);
+        }
+
+
+        .results-top-status {
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 7px 13px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(34, 197, 94, 0.10);
+
+            border:
+                1px solid rgba(34, 197, 94, 0.20);
+
+            color: #bbf7d0;
+
+            font-size: 12px;
+
+            font-weight: 750;
+        }
+
+
+        .results-status-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.10);
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ====================================================== */
+
+        .results-container {
+            width: min(1160px, 92%);
+
+            margin: 0 auto;
+
+            padding-top: 38px;
+        }
+
+
+        /* =====================================================
+           HERO
+        ====================================================== */
+
+        .results-hero {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 32px;
+
+            margin-bottom: 22px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f,
+                    #102a47
+                );
+
+            border-radius: 21px;
+
+            color: white;
+
+            box-shadow:
+                0 15px 35px rgba(7, 17, 31, 0.16);
+        }
+
+
+        .results-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 280px;
+            height: 280px;
+
+            right: -80px;
+            top: -130px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(6, 182, 212, 0.20),
+                    transparent 68%
+                );
+        }
+
+
+        .results-hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+            height: 220px;
+
+            left: -120px;
+            bottom: -150px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37, 99, 235, 0.22),
+                    transparent 68%
+                );
+        }
+
+
+        .results-hero-content {
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        .results-eyebrow {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-bottom: 12px;
+
+            padding: 6px 11px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.12);
+
+            color: #bae6fd;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+        }
+
+
+        .results-hero h1 {
+            margin: 0 0 8px;
+
+            font-size: clamp(28px, 4vw, 40px);
+
+            line-height: 1.1;
+
+            letter-spacing: -1.2px;
+
+            font-weight: 900;
+        }
+
+
+        .results-hero p {
+            max-width: 680px;
+
+            margin: 0;
+
+            color: #cbd5e1;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+
+        .results-document-pill {
+            position: relative;
+
+            z-index: 2;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-top: 20px;
+
+            padding: 9px 14px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.12);
+
+            color: #e2e8f0;
+
+            font-size: 12px;
+
+            font-weight: 750;
+        }
+
+
+        /* =====================================================
+           SECTION CARD
+        ====================================================== */
+
+        .result-card {
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.045);
+        }
+
+
+        .result-card-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            padding-bottom: 17px;
+
+            margin-bottom: 19px;
+
+            border-bottom:
+                1px solid #edf2f7;
+        }
+
+
+        .result-card-title {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin: 0;
+
+            color: #142033;
+
+            font-size: 19px;
+
+            font-weight: 850;
+
+            letter-spacing: -0.3px;
+        }
+
+
+        .result-card-icon {
+            width: 34px;
+            height: 34px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ecfeff
+                );
+
+            border:
+                1px solid #dbeafe;
+        }
+
+
+        /* =====================================================
+           OCR GRID
+        ====================================================== */
+
+        .results-ocr-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .results-field {
+            min-width: 0;
+
+            padding: 15px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #f8fafc,
+                    #ffffff
+                );
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 12px;
+
+            transition:
+                transform 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .results-field:hover {
+            transform: translateY(-2px);
+
+            border-color: #cbdcf7;
+
+            box-shadow:
+                0 8px 20px rgba(15, 23, 42, 0.05);
+        }
+
+
+        .results-field-label {
+            margin-bottom: 7px;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.55px;
+        }
+
+
+        .results-field-value {
+            color: #142033;
+
+            font-size: 14px;
+
+            font-weight: 750;
+
+            line-height: 1.5;
+
+            word-break: break-word;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ====================================================== */
+
+        .result-status {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            padding: 6px 11px;
+
+            border-radius: 999px;
+
+            font-size: 11px;
+
+            font-weight: 850;
+
+            white-space: nowrap;
+        }
+
+
+        .result-status-success {
+            color: #15803d;
+
+            background: #f0fdf4;
+
+            border:
+                1px solid #dcfce7;
+        }
+
+
+        .result-status-warning {
+            color: #b45309;
+
+            background: #fffbeb;
+
+            border:
+                1px solid #fef3c7;
+        }
+
+
+        .result-status-danger {
+            color: #b91c1c;
+
+            background: #fef2f2;
+
+            border:
+                1px solid #fee2e2;
+        }
+
+
+        .result-status-neutral {
+            color: #64748b;
+
+            background: #f8fafc;
+
+            border:
+                1px solid #e2e8f0;
+        }
+
+
+        /* =====================================================
+           RESULT METRICS
+        ====================================================== */
+
+        .results-metrics {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .results-metric {
+            padding: 17px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #f8fafc,
+                    #ffffff
+                );
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 12px;
+        }
+
+
+        .results-metric-label {
+            margin-bottom: 6px;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        .results-metric-value {
+            color: #142033;
+
+            font-size: 20px;
+
+            font-weight: 900;
+        }
+
+
+        .results-metric-description {
+            margin-top: 4px;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           ANALYSIS ROW
+        ====================================================== */
+
+        .results-analysis-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 13px;
+        }
+
+
+        .results-analysis-item {
+            padding: 16px;
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+        }
+
+
+        .results-analysis-item-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-bottom: 9px;
+        }
+
+
+        .results-analysis-item-title {
+            color: #334155;
+
+            font-size: 13px;
+
+            font-weight: 800;
+        }
+
+
+        .results-analysis-item p {
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           RISK CARD
+        ====================================================== */
+
+        .results-risk-card {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 27px;
+
+            margin-bottom: 20px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ffffff,
+                    #f5f9ff
+                );
+
+            border:
+                1px solid #cfe0f5;
+
+            border-radius: 19px;
+
+            box-shadow:
+                0 12px 32px rgba(37, 99, 235, 0.07);
+        }
+
+
+        .results-risk-card::before {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 4px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #06b6d4
+                );
+        }
+
+
+        .results-risk-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 24px;
+        }
+
+
+        .results-risk-header h2 {
+            margin: 0;
+
+            color: #142033;
+
+            font-size: 20px;
+
+            font-weight: 900;
+        }
+
+
+        .results-risk-content {
+            display: grid;
+
+            grid-template-columns:
+                150px 1fr;
+
+            align-items: center;
+
+            gap: 27px;
+        }
+
+
+        .results-risk-score {
+            width: 140px;
+            height: 140px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            border:
+                11px solid #dbeafe;
+
+            background:
+                radial-gradient(
+                    circle,
+                    #ffffff 55%,
+                    transparent 56%
+                );
+
+            box-shadow:
+                inset 0 0 0 1px #bfdbfe,
+                0 10px 25px rgba(37, 99, 235, 0.08);
+
+            color: #142033;
+
+            font-size: 24px;
+
+            font-weight: 900;
+        }
+
+
+        .results-risk-level {
+            margin: 0 0 8px;
+
+            color: #b45309;
+
+            font-size: 27px;
+
+            font-weight: 900;
+        }
+
+
+        .results-risk-description {
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           DECISION AREA
+        ====================================================== */
+
+        .results-decision {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 28px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f,
+                    #102238
+                );
+
+            border-radius: 19px;
+
+            color: white;
+
+            box-shadow:
+                0 15px 35px rgba(7, 17, 31, 0.17);
+        }
+
+
+        .results-decision::after {
+            content: "";
+
+            position: absolute;
+
+            right: -120px;
+            bottom: -170px;
+
+            width: 330px;
+            height: 330px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(6, 182, 212, 0.15),
+                    transparent 68%
+                );
+        }
+
+
+        .results-decision-content {
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        .results-decision h2 {
+            margin: 0 0 7px;
+
+            font-size: 21px;
+
+            font-weight: 900;
+        }
+
+
+        .results-decision p {
+            margin: 0 0 21px;
+
+            color: #cbd5e1;
+
+            font-size: 13px;
+        }
+
+
+        .results-decision-actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+
+        .results-decision-actions button {
+            padding: 14px 18px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 850;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+
+        .results-decision-actions button:hover {
+            transform: translateY(-2px);
+
+            opacity: 0.94;
+
+            box-shadow:
+                0 10px 22px rgba(0, 0, 0, 0.20);
+        }
+
+
+        .results-approve {
+            background: #22c55e;
+
+            color: white;
+        }
+
+
+        .results-review {
+            background: #f59e0b;
+
+            color: white;
+        }
+
+
+        .results-reject {
+            background: #ef4444;
+
+            color: white;
+        }
+
+
+        /* =====================================================
+           FOOTER NOTE
+        ====================================================== */
+
+        .results-footer-note {
+            margin-top: 18px;
+
+            padding: 13px 16px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid #e8edf3;
+
+            border-radius: 11px;
+
+            color: #64748b;
+
+            font-size: 11px;
+
+            line-height: 1.7;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 900px) {
+
+            .results-ocr-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .results-metrics {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .results-risk-content {
+                grid-template-columns: 1fr;
+
+                text-align: center;
+            }
+
+
+            .results-risk-score {
+                margin: 0 auto;
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .results-topbar {
+                padding: 0 4%;
+            }
+
+
+            .results-top-status {
+                display: none;
+            }
+
+
+            .results-container {
+                width: 94%;
+
+                padding-top: 25px;
+            }
+
+
+            .results-hero,
+            .result-card,
+            .results-risk-card,
+            .results-decision {
+                padding: 21px;
+            }
+
+
+            .results-analysis-grid,
+            .results-ocr-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .results-metrics {
+                grid-template-columns: 1fr;
+            }
+
+
+            .results-decision-actions {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 450px) {
+
+            .results-hero h1 {
+                font-size: 27px;
+            }
+
+
+            .result-card-title {
+                font-size: 17px;
+            }
+
+
+            .result-card-header,
+            .results-risk-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+        }
+
+
+        /* =====================================================
+           ACCESSIBILITY
+        ====================================================== */
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+
+            outline:
+                3px solid rgba(59, 130, 246, 0.30);
+
+            outline-offset: 3px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="results-page">
+
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <header class="results-topbar">
+
+
+        <div class="results-brand">
+
+            <span class="results-brand-icon">
+                🛡
+            </span>
+
+            IdentityGuard AI
+
+        </div>
+
+
+        <div class="results-top-status">
+
+            <span class="results-status-dot"></span>
+
+            Screening Complete
+
+        </div>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="results-container">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="results-hero">
+
+            <div class="results-hero-content">
+
+
+                <div class="results-eyebrow">
+
+                    ✦ AI Identity Screening
+
+                </div>
+
+
+                <h1>
+                    Screening Results
+                </h1>
+
+
+                <p>
+
+                    The submitted identity document has completed
+                    automated OCR extraction, validation, tampering,
+                    identity and risk analysis.
+
+                </p>
+
+
+                <div class="results-document-pill">
+
+                    📄
+
+                    Document Type:
+
+                    {{ document_type }}
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             OCR EXTRACTION
+        ================================================== -->
+
+        <section class="result-card">
+
+
+            <div class="result-card-header">
+
+                <h2 class="result-card-title">
+
+                    <span class="result-card-icon">
+                        🔤
+                    </span>
+
+                    OCR Extraction
+
+                </h2>
+
+
+                <span class="result-status result-status-success">
+
+                    ✓ Extracted
+
+                </span>
+
+            </div>
+
+
+
+            <div class="results-ocr-grid">
+
+
+                <div class="results-field">
+
+                    <div class="results-field-label">
+                        Full Name
+                    </div>
+
+                    <div class="results-field-value">
+                        {{ extracted_data.name or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="results-field">
+
+                    <div class="results-field-label">
+                        Document Number
+                    </div>
+
+                    <div class="results-field-value">
+                        {{ extracted_data.document_number or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="results-field">
+
+                    <div class="results-field-label">
+                        Date of Birth
+                    </div>
+
+                    <div class="results-field-value">
+
+                        {{
+                            extracted_data.date_of_birth
+                            or extracted_data.dob
+                            or "Not detected"
+                        }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-field">
+
+                    <div class="results-field-label">
+                        Gender
+                    </div>
+
+                    <div class="results-field-value">
+                        {{ extracted_data.gender or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="results-field">
+
+                    <div class="results-field-label">
+                        Nationality
+                    </div>
+
+                    <div class="results-field-value">
+                        {{ extracted_data.nationality or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="results-field">
+
+                    <div class="results-field-label">
+                        Expiry Date
+                    </div>
+
+                    <div class="results-field-value">
+                        {{ extracted_data.expiry_date or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="results-field">
+
+                    <div class="results-field-label">
+                        Address
+                    </div>
+
+                    <div class="results-field-value">
+                        {{ extracted_data.address or "Not detected" }}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             VALIDATION
+        ================================================== -->
+
+        <section class="result-card">
+
+
+            <div class="result-card-header">
+
+                <h2 class="result-card-title">
+
+                    <span class="result-card-icon">
+                        📋
+                    </span>
+
+                    Document Validation
+
+                </h2>
+
+
+                {% if validation_result.status == "VALID" %}
+
+                <span class="result-status result-status-success">
+                    ✓ VALID
+                </span>
+
+                {% elif validation_result.status == "REVIEW" %}
+
+                <span class="result-status result-status-warning">
+                    ⚠ REVIEW
+                </span>
+
+                {% else %}
+
+                <span class="result-status result-status-danger">
+                    ✕ INVALID
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="results-metrics">
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Validation Status
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ validation_result.status }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Validation Score
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ validation_result.score }}/100
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Checks
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ validation_result.checks|length }}
+
+                    </div>
+
+                    <div class="results-metric-description">
+                        Validation checks evaluated
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            {% if validation_result.reasons %}
+
+            <div class="results-footer-note">
+
+                {% for reason in validation_result.reasons %}
+
+                    {{ reason }}
+
+                    {% if not loop.last %}
+                        ·
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             TAMPERING
+        ================================================== -->
+
+        <section class="result-card">
+
+
+            <div class="result-card-header">
+
+                <h2 class="result-card-title">
+
+                    <span class="result-card-icon">
+                        🔍
+                    </span>
+
+                    Tampering Detection
+
+                </h2>
+
+
+                {% if tampering_result.status == "LOW RISK" %}
+
+                <span class="result-status result-status-success">
+                    ✓ LOW RISK
+                </span>
+
+                {% elif tampering_result.status == "MEDIUM RISK" %}
+
+                <span class="result-status result-status-warning">
+                    ⚠ MEDIUM RISK
+                </span>
+
+                {% else %}
+
+                <span class="result-status result-status-danger">
+                    ✕ HIGH RISK
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="results-analysis-grid">
+
+
+                <div class="results-analysis-item">
+
+                    <div class="results-analysis-item-header">
+
+                        <span class="results-analysis-item-title">
+                            Tampering Score
+                        </span>
+
+                        <strong>
+                            {{ tampering_result.score }}/100
+                        </strong>
+
+                    </div>
+
+                    <p>
+                        Overall image-level tampering
+                        indicator generated by the screening engine.
+                    </p>
+
+                </div>
+
+
+                <div class="results-analysis-item">
+
+                    <div class="results-analysis-item-header">
+
+                        <span class="results-analysis-item-title">
+                            ELA Analysis
+                        </span>
+
+                        <strong>
+                            {{ tampering_result.ela_score }}/100
+                        </strong>
+
+                    </div>
+
+                    <p>
+                        Error Level Analysis signal used
+                        during document image examination.
+                    </p>
+
+                </div>
+
+
+                <div class="results-analysis-item">
+
+                    <div class="results-analysis-item-header">
+
+                        <span class="results-analysis-item-title">
+                            Suspicious Pixel Ratio
+                        </span>
+
+                        <strong>
+                            {{ tampering_result.suspicious_ratio }}%
+                        </strong>
+
+                    </div>
+
+                    <p>
+                        Percentage of pixels associated with
+                        suspicious image-level characteristics.
+                    </p>
+
+                </div>
+
+
+                <div class="results-analysis-item">
+
+                    <div class="results-analysis-item-header">
+
+                        <span class="results-analysis-item-title">
+                            Edge Concentration
+                        </span>
+
+                        <strong>
+                            {{ tampering_result.edge_ratio }}%
+                        </strong>
+
+                    </div>
+
+                    <p>
+                        Image edge distribution used as
+                        an additional forensic signal.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             FACE VERIFICATION
+        ================================================== -->
+
+        <section class="result-card">
+
+
+            <div class="result-card-header">
+
+                <h2 class="result-card-title">
+
+                    <span class="result-card-icon">
+                        👤
+                    </span>
+
+                    Face Verification
+
+                </h2>
+
+
+                {% if face_result.status == "MATCH" %}
+
+                <span class="result-status result-status-success">
+                    ✓ MATCH
+                </span>
+
+                {% elif face_result.status == "REVIEW" %}
+
+                <span class="result-status result-status-warning">
+                    ⚠ REVIEW
+                </span>
+
+                {% elif face_result.status == "NOT PROVIDED" %}
+
+                <span class="result-status result-status-neutral">
+                    — NOT PROVIDED
+                </span>
+
+                {% else %}
+
+                <span class="result-status result-status-danger">
+                    ✕ NO MATCH
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="results-metrics">
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Verification Status
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ face_result.status }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Match Score
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ face_result.score }}%
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Result
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {% if face_result.status == "MATCH" %}
+                            Verified
+                        {% elif face_result.status == "NO MATCH" %}
+                            Mismatch
+                        {% else %}
+                            Review
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="results-footer-note">
+
+                {{ face_result.reason }}
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             LIVENESS
+        ================================================== -->
+
+        <section class="result-card">
+
+
+            <div class="result-card-header">
+
+                <h2 class="result-card-title">
+
+                    <span class="result-card-icon">
+                        🛡
+                    </span>
+
+                    Liveness Detection
+
+                </h2>
+
+
+                {% if liveness_result.status == "LIVE" %}
+
+                <span class="result-status result-status-success">
+                    ✓ LIVE
+                </span>
+
+                {% elif liveness_result.status == "REVIEW" %}
+
+                <span class="result-status result-status-warning">
+                    ⚠ REVIEW
+                </span>
+
+                {% elif liveness_result.status == "NOT PROVIDED" %}
+
+                <span class="result-status result-status-neutral">
+                    — NOT PROVIDED
+                </span>
+
+                {% else %}
+
+                <span class="result-status result-status-danger">
+                    ✕ SPOOF
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="results-metrics">
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Liveness Status
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ liveness_result.status }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Liveness Score
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ liveness_result.score }}/100
+
+                    </div>
+
+                </div>
+
+
+                <div class="results-metric">
+
+                    <div class="results-metric-label">
+                        Sharpness
+                    </div>
+
+                    <div class="results-metric-value">
+
+                        {{ liveness_result.sharpness }}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="results-footer-note">
+
+                {{ liveness_result.reason }}
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             RISK ANALYSIS
+        ================================================== -->
+
+        <section class="results-risk-card">
+
+
+            <div class="results-risk-header">
+
+                <h2>
+                    ⚠ AI Risk Analysis
+                </h2>
+
+
+                {% if risk_result.level == "LOW RISK" %}
+
+                <span class="result-status result-status-success">
+                    ✓ LOW RISK
+                </span>
+
+                {% elif risk_result.level == "MEDIUM RISK" %}
+
+                <span class="result-status result-status-warning">
+                    ⚠ MEDIUM RISK
+                </span>
+
+                {% else %}
+
+                <span class="result-status result-status-danger">
+                    ✕ HIGH RISK
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <div class="results-risk-content">
+
+
+                <div class="results-risk-score">
+
+                    {{ risk_result.score }}/100
+
+                </div>
+
+
+                <div>
+
+                    <h3 class="results-risk-level">
+
+                        {{ risk_result.level }}
+
+                    </h3>
+
+
+                    <p class="results-risk-description">
+
+                        The final risk score combines the available
+                        document validation, tampering detection,
+                        face verification, liveness and registry
+                        verification signals.
+
+                    </p>
+
+
+                    {% if risk_result.reasons %}
+
+                    <div class="results-footer-note">
+
+                        <strong>
+                            Risk Factors:
+                        </strong>
+
+                        {% for reason in risk_result.reasons %}
+
+                            <br>
+
+                            • {{ reason }}
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             OFFICER DECISION
+        ================================================== -->
+
+        <section class="results-decision">
+
+
+            <div class="results-decision-content">
+
+
+                <h2>
+                    👮 Officer Decision
+                </h2>
+
+
+                <p>
+                    Review the screening information and record
+                    the final decision for this document.
+                </p>
+
+
+
+                <form
+                    action="{{ url_for('decision') }}"
+                    method="POST"
+                    class="results-decision-actions"
+                >
+
+
+                    <input
+                        type="hidden"
+                        name="document_type"
+                        value="{{ document_type }}"
+                    >
+
+
+                    <button
+                        type="submit"
+                        name="officer_decision"
+                        value="approved"
+                        class="results-approve"
+                    >
+                        ✓ Approve
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        name="officer_decision"
+                        value="review"
+                        class="results-review"
+                    >
+                        ⚠ Send for Review
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        name="officer_decision"
+                        value="rejected"
+                        class="results-reject"
+                    >
+                        ✕ Reject
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <div class="results-footer-note">
+
+            🔒 IdentityGuard AI · Automated screening assists
+            authorized officers; final decisions remain with
+            authorized personnel.
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

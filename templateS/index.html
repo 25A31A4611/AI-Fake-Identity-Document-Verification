@@ -5,102 +5,1136 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>AI Identity Screening System</title>
+    <title>
+        IdentityGuard AI | Identity Screening
+    </title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =====================================================
+           LANDING PAGE
+        ====================================================== */
+
+        .landing-page {
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(37, 99, 235, 0.13),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(6, 182, 212, 0.10),
+                    transparent 27%
+                ),
+                #f4f8fc;
+
+            color: #142033;
+
+            overflow: hidden;
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ====================================================== */
+
+        .landing-nav {
+
+            position: relative;
+
+            z-index: 20;
+
+            min-height: 76px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 6%;
+
+            background:
+                rgba(7, 17, 31, 0.97);
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 8px 28px rgba(7, 17, 31, 0.14);
+        }
+
+
+        .landing-brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            color: #ffffff;
+
+            font-size: 21px;
+
+            font-weight: 900;
+
+            letter-spacing: -0.4px;
+        }
+
+
+        .landing-brand-icon {
+
+            width: 41px;
+
+            height: 41px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
+
+            box-shadow:
+                0 8px 20px rgba(37, 99, 235, 0.30);
+
+            font-size: 20px;
+        }
+
+
+        .landing-nav-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 17px;
+        }
+
+
+        .landing-nav-security {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+
+        .landing-nav-dot {
+
+            width: 7px;
+
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.09);
+        }
+
+
+        .landing-login-button {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            min-height: 39px;
+
+            padding: 0 16px;
+
+            border-radius: 9px;
+
+            background: #ffffff;
+
+            color: #172033;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 850;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .landing-login-button:hover {
+
+            transform:
+                translateY(-2px);
+
+            background:
+                #eff6ff;
+
+            box-shadow:
+                0 7px 17px rgba(255, 255, 255, 0.12);
+        }
+
+
+        /* =====================================================
+           HERO
+        ====================================================== */
+
+        .landing-hero {
+
+            position: relative;
+
+            width: min(1050px, 90%);
+
+            min-height:
+                calc(100vh - 76px);
+
+            margin: 0 auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding:
+                60px 0 75px;
+
+            box-sizing: border-box;
+        }
+
+
+        .landing-hero::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 520px;
+
+            height: 520px;
+
+            left: 50%;
+
+            top: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37, 99, 235, 0.07),
+                    transparent 68%
+                );
+
+            pointer-events: none;
+        }
+
+
+        /* =====================================================
+           HERO CONTENT
+        ====================================================== */
+
+        .landing-content {
+
+            position: relative;
+
+            z-index: 3;
+
+            width: min(850px, 100%);
+
+            text-align: center;
+        }
+
+
+        .landing-eyebrow {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 7px 12px;
+
+            margin-bottom: 19px;
+
+            border-radius: 999px;
+
+            background:
+                #eff6ff;
+
+            border:
+                1px solid #dbeafe;
+
+            color: #1d4ed8;
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.9px;
+        }
+
+
+        .landing-eyebrow-icon {
+
+            width: 7px;
+
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #2563eb;
+
+            box-shadow:
+                0 0 0 4px rgba(37, 99, 235, 0.09);
+        }
+
+
+        .landing-title {
+
+            max-width: 850px;
+
+            margin: 0 auto;
+
+            color: #07111f;
+
+            font-size:
+                clamp(45px, 7vw, 76px);
+
+            line-height: 1.02;
+
+            letter-spacing: -3.5px;
+
+            font-weight: 950;
+        }
+
+
+        .landing-title-gradient {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #0891b2
+                );
+
+            -webkit-background-clip: text;
+
+            background-clip: text;
+
+            color: transparent;
+        }
+
+
+        .landing-subtitle {
+
+            margin: 20px 0 0;
+
+            color: #334155;
+
+            font-size: 20px;
+
+            line-height: 1.45;
+
+            font-weight: 650;
+        }
+
+
+        .landing-description {
+
+            max-width: 690px;
+
+            margin: 16px auto 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.8;
+        }
+
+
+        /* =====================================================
+           CTA
+        ====================================================== */
+
+        .landing-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            margin-top: 29px;
+        }
+
+
+        .landing-primary-button {
+
+            min-height: 49px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 9px;
+
+            padding: 0 22px;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #1d4ed8
+                );
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 850;
+
+            box-shadow:
+                0 10px 24px rgba(37, 99, 235, 0.23);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .landing-primary-button:hover {
+
+            transform:
+                translateY(-3px);
+
+            box-shadow:
+                0 15px 30px rgba(37, 99, 235, 0.30);
+        }
+
+
+        .landing-secondary-button {
+
+            min-height: 49px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            padding: 0 17px;
+
+            border-radius: 11px;
+
+            background:
+                #ffffff;
+
+            border:
+                1px solid #dbe3ec;
+
+            color: #475569;
+
+            font-size: 12px;
+
+            font-weight: 750;
+
+            box-sizing: border-box;
+        }
+
+
+        /* =====================================================
+           TRUST POINTS
+        ====================================================== */
+
+        .landing-trust-row {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            justify-content: center;
+
+            gap: 17px;
+
+            margin-top: 28px;
+        }
+
+
+        .landing-trust-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 750;
+        }
+
+
+        .landing-trust-check {
+
+            width: 20px;
+
+            height: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 6px;
+
+            background:
+                #ecfdf5;
+
+            border:
+                1px solid #bbf7d0;
+
+            color: #16a34a;
+
+            font-size: 10px;
+
+            font-weight: 900;
+        }
+
+
+        /* =====================================================
+           BOTTOM CAPABILITIES
+        ====================================================== */
+
+        .landing-capabilities {
+
+            position: relative;
+
+            z-index: 10;
+
+            width: min(1050px, 90%);
+
+            margin:
+                -5px auto 45px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 13px;
+        }
+
+
+        .landing-capability {
+
+            padding: 17px;
+
+            background:
+                rgba(255, 255, 255, 0.88);
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 13px;
+
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.035);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .landing-capability:hover {
+
+            transform:
+                translateY(-3px);
+
+            border-color:
+                #bfdbfe;
+
+            box-shadow:
+                0 10px 25px rgba(15, 23, 42, 0.07);
+        }
+
+
+        .landing-capability-icon {
+
+            width: 31px;
+
+            height: 31px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 10px;
+
+            border-radius: 9px;
+
+            background:
+                #eff6ff;
+
+            font-size: 14px;
+        }
+
+
+        .landing-capability strong {
+
+            display: block;
+
+            color: #334155;
+
+            font-size: 11px;
+
+            font-weight: 900;
+        }
+
+
+        .landing-capability span {
+
+            display: block;
+
+            margin-top: 4px;
+
+            color: #94a3b8;
+
+            font-size: 9px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 850px) {
+
+            .landing-hero {
+
+                width: 92%;
+
+                min-height:
+                    calc(100vh - 76px);
+
+                padding:
+                    50px 0 60px;
+            }
+
+
+            .landing-title {
+
+                font-size:
+                    clamp(42px, 8vw, 65px);
+            }
+
+
+            .landing-description {
+
+                max-width: 650px;
+            }
+
+
+            .landing-capabilities {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                margin-top: 0;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .landing-nav {
+
+                padding: 0 4%;
+            }
+
+
+            .landing-nav-security {
+
+                display: none;
+            }
+
+
+            .landing-brand {
+
+                font-size: 17px;
+            }
+
+
+            .landing-brand-icon {
+
+                width: 36px;
+
+                height: 36px;
+            }
+
+
+            .landing-hero {
+
+                width: 92%;
+
+                min-height:
+                    calc(100vh - 76px);
+
+                padding:
+                    42px 0 50px;
+            }
+
+
+            .landing-title {
+
+                font-size: 43px;
+
+                letter-spacing: -2px;
+            }
+
+
+            .landing-subtitle {
+
+                font-size: 16px;
+            }
+
+
+            .landing-description {
+
+                font-size: 13px;
+            }
+
+
+            .landing-actions {
+
+                flex-direction: column;
+
+                width: 100%;
+            }
+
+
+            .landing-primary-button,
+
+            .landing-secondary-button {
+
+                width: 100%;
+
+                box-sizing: border-box;
+            }
+
+
+            .landing-capabilities {
+
+                width: 92%;
+
+                grid-template-columns:
+                    1fr;
+            }
+        }
+
+
+        @media (max-width: 420px) {
+
+            .landing-title {
+
+                font-size: 37px;
+            }
+
+
+            .landing-trust-row {
+
+                flex-direction: column;
+
+                align-items: center;
+            }
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-    <nav class="navbar">
 
-        <div class="logo">
-            AI<span>SCREEN</span>
-        </div>
-
-        <div class="nav-status">
-            ● SYSTEM ONLINE
-        </div>
-
-    </nav>
+<div class="landing-page">
 
 
-    <section class="hero">
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
 
-        <div class="badge">
-            AI-POWERED SECURITY PLATFORM
-        </div>
-
-        <h1>
-            AI-Based Fake Identity &
-            <span>Document Screening</span>
-            System
-        </h1>
-
-        <p>
-            An AI-assisted multi-layer verification platform
-            designed to help authorized officers identify
-            suspicious identity and document activity.
-        </p>
-
-        <a href="/login" class="start-btn">
-            START SCREENING →
-        </a>
-
-    </section>
+    <header class="landing-nav">
 
 
-    <section class="sectors">
+        <div class="landing-brand">
 
-        <h2>Supported Sectors</h2>
+            <span class="landing-brand-icon">
+                🛡
+            </span>
 
-        <div class="sector-grid">
-
-            <div class="sector-card">
-                ✈️
-                <br><br>
-                Airport Security
-            </div>
-
-            <div class="sector-card">
-                🚦
-                <br><br>
-                Traffic Enforcement
-            </div>
-
-            <div class="sector-card">
-                🏦
-                <br><br>
-                Banking
-            </div>
-
-            <div class="sector-card">
-                🛂
-                <br><br>
-                Border Integrity
-            </div>
-
-            <div class="sector-card">
-                🏛️
-                <br><br>
-                Government Services
-            </div>
+            IdentityGuard AI
 
         </div>
 
-    </section>
+
+        <div class="landing-nav-right">
 
 
-    <footer class="footer">
+            <div class="landing-nav-security">
 
-        AI Identity Screening System
-        •
-        SIH 2026 Prototype
+                <span class="landing-nav-dot"></span>
 
-    </footer>
+                Secure AI Screening
+
+            </div>
+
+
+            <a
+                href="{{ url_for('login') }}"
+                class="landing-login-button"
+            >
+
+                👮
+
+                Officer Login
+
+            </a>
+
+
+        </div>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main>
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="landing-hero">
+
+
+            <div class="landing-content">
+
+
+                <!-- EYEBROW -->
+
+                <div class="landing-eyebrow">
+
+                    <span class="landing-eyebrow-icon"></span>
+
+                    AI-Powered Identity Security
+
+                </div>
+
+
+
+                <!-- TITLE -->
+
+                <h1 class="landing-title">
+
+                    Smarter
+
+                    <span class="landing-title-gradient">
+                        Identity
+                    </span>
+
+                    Screening.
+
+                </h1>
+
+
+
+                <!-- SUBTITLE -->
+
+                <h2 class="landing-subtitle">
+
+                    Secure. Intelligent. Fast.
+
+                </h2>
+
+
+
+                <!-- DESCRIPTION -->
+
+                <p class="landing-description">
+
+                    IdentityGuard AI assists authorized personnel
+                    in screening identity documents, extracting
+                    information, detecting document anomalies and
+                    evaluating identity risk through a unified
+                    verification workflow.
+
+                </p>
+
+
+
+                <!-- CTA -->
+
+                <div class="landing-actions">
+
+
+                    <a
+                        href="{{ url_for('login') }}"
+                        class="landing-primary-button"
+                    >
+
+                        Get Started
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <div class="landing-secondary-button">
+
+                        🔐
+
+                        Secure Screening Environment
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- TRUST POINTS -->
+
+                <div class="landing-trust-row">
+
+
+                    <div class="landing-trust-item">
+
+                        <span class="landing-trust-check">
+                            ✓
+                        </span>
+
+                        OCR Analysis
+
+                    </div>
+
+
+                    <div class="landing-trust-item">
+
+                        <span class="landing-trust-check">
+                            ✓
+                        </span>
+
+                        Document Validation
+
+                    </div>
+
+
+                    <div class="landing-trust-item">
+
+                        <span class="landing-trust-check">
+                            ✓
+                        </span>
+
+                        AI Risk Assessment
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             CAPABILITIES
+        ================================================== -->
+
+        <section class="landing-capabilities">
+
+
+            <div class="landing-capability">
+
+
+                <div class="landing-capability-icon">
+                    📄
+                </div>
+
+
+                <strong>
+                    OCR Extraction
+                </strong>
+
+
+                <span>
+
+                    Extract structured identity information
+                    from supported documents.
+
+                </span>
+
+
+            </div>
+
+
+
+            <div class="landing-capability">
+
+
+                <div class="landing-capability-icon">
+                    🛡
+                </div>
+
+
+                <strong>
+                    Document Security
+                </strong>
+
+
+                <span>
+
+                    Analyze documents for validation and
+                    potential tampering signals.
+
+                </span>
+
+
+            </div>
+
+
+
+            <div class="landing-capability">
+
+
+                <div class="landing-capability-icon">
+                    👤
+                </div>
+
+
+                <strong>
+                    Identity Signals
+                </strong>
+
+
+                <span>
+
+                    Support face verification and liveness
+                    analysis when available.
+
+                </span>
+
+
+            </div>
+
+
+
+            <div class="landing-capability">
+
+
+                <div class="landing-capability-icon">
+                    📊
+                </div>
+
+
+                <strong>
+                    Risk Analysis
+                </strong>
+
+
+                <span>
+
+                    Combine screening signals into an
+                    AI-assisted risk assessment.
+
+                </span>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
 
 </body>
 
