@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Border Checkpoint | IdentityGuard AI
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =====================================================
+           BORDER CHECKPOINT PAGE
+           UI ONLY
+        ====================================================== */
+
+        .border-page {
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 8% 0%,
+                    rgba(37, 99, 235, 0.10),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 92% 15%,
+                    rgba(6, 182, 212, 0.08),
+                    transparent 28%
+                ),
+                #f3f7fc;
+
+            color: #142033;
+        }
+
+
+        /* =====================================================
+           TOP NAVIGATION
+        ====================================================== */
+
+        .border-topbar {
+
+            min-height: 72px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background:
+                rgba(7, 17, 31, 0.98);
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 8px 28px rgba(7, 17, 31, 0.16);
+        }
+
+
+        .border-brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+
+            font-weight: 900;
+
+            letter-spacing: -0.3px;
+        }
+
+
+        .border-brand-icon {
+
+            width: 39px;
+            height: 39px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
+
+            box-shadow:
+                0 7px 18px rgba(37, 99, 235, 0.30);
+        }
+
+
+        .border-officer {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 8px 13px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.10);
+
+            color: #dbeafe;
+
+            font-size: 12px;
+
+            font-weight: 750;
+        }
+
+
+        .border-officer-icon {
+
+            width: 25px;
+            height: 25px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 7px;
+
+            background:
+                rgba(37, 99, 235, 0.25);
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ====================================================== */
+
+        .border-container {
+
+            width: min(1120px, 92%);
+
+            margin: 0 auto;
+
+            padding:
+                42px 0 55px;
+        }
+
+
+        /* =====================================================
+           HERO
+        ====================================================== */
+
+        .border-hero {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 34px;
+
+            margin-bottom: 28px;
+
+            border-radius: 21px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f 0%,
+                    #102b49 62%,
+                    #12395a 100%
+                );
+
+            color: #ffffff;
+
+            box-shadow:
+                0 17px 38px rgba(7, 17, 31, 0.16);
+        }
+
+
+        .border-hero::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 390px;
+            height: 390px;
+
+            right: -170px;
+            top: -220px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(6, 182, 212, 0.22),
+                    transparent 68%
+                );
+        }
+
+
+        .border-hero::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 230px;
+            height: 230px;
+
+            right: 180px;
+            bottom: -190px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37, 99, 235, 0.18),
+                    transparent 70%
+                );
+        }
+
+
+        .border-hero-content {
+
+            position: relative;
+
+            z-index: 2;
+
+            max-width: 760px;
+        }
+
+
+        .border-eyebrow {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 6px 11px;
+
+            margin-bottom: 13px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.12);
+
+            color: #bae6fd;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+        }
+
+
+        .border-eyebrow-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #38bdf8;
+
+            box-shadow:
+                0 0 0 4px rgba(56, 189, 248, 0.10);
+        }
+
+
+        .border-hero h1 {
+
+            margin: 0 0 9px;
+
+            font-size:
+                clamp(29px, 4vw, 42px);
+
+            line-height: 1.08;
+
+            letter-spacing: -1.2px;
+
+            font-weight: 900;
+        }
+
+
+        .border-hero p {
+
+            max-width: 690px;
+
+            margin: 0;
+
+            color: #cbd5e1;
+
+            font-size: 14px;
+
+            line-height: 1.75;
+        }
+
+
+        .border-hero-badge {
+
+            position: absolute;
+
+            right: 30px;
+            bottom: 27px;
+
+            z-index: 3;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 9px 12px;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.11);
+
+            color: #dbeafe;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            backdrop-filter:
+                blur(8px);
+        }
+
+
+        /* =====================================================
+           SECTION HEADER
+        ====================================================== */
+
+        .border-section-header {
+
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .border-section-header h2 {
+
+            margin: 0;
+
+            color: #142033;
+
+            font-size: 20px;
+
+            font-weight: 900;
+
+            letter-spacing: -0.4px;
+        }
+
+
+        .border-section-header p {
+
+            margin: 4px 0 0;
+
+            color: #64748b;
+
+            font-size: 12px;
+        }
+
+
+        .border-status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 7px 11px;
+
+            border-radius: 999px;
+
+            background: #ecfdf5;
+
+            border:
+                1px solid #bbf7d0;
+
+            color: #166534;
+
+            font-size: 10px;
+
+            font-weight: 850;
+
+            text-transform: uppercase;
+        }
+
+
+        .border-status-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+        }
+
+
+        /* =====================================================
+           DOCUMENT GRID
+        ====================================================== */
+
+        .border-document-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 17px;
+        }
+
+
+        /* =====================================================
+           DOCUMENT CARD
+        ====================================================== */
+
+        .border-document-card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            min-height: 255px;
+
+            padding: 24px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: space-between;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 7px 23px rgba(15, 23, 42, 0.045);
+
+            transition:
+                transform 0.22s ease,
+                box-shadow 0.22s ease,
+                border-color 0.22s ease;
+        }
+
+
+        .border-document-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            right: -85px;
+            top: -85px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37, 99, 235, 0.08),
+                    transparent 68%
+                );
+
+            pointer-events: none;
+        }
+
+
+        .border-document-card:hover {
+
+            transform:
+                translateY(-5px);
+
+            border-color:
+                #bfdbfe;
+
+            box-shadow:
+                0 17px 35px rgba(15, 23, 42, 0.09);
+        }
+
+
+        .border-card-top {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+        }
+
+
+        .border-document-icon {
+
+            width: 55px;
+            height: 55px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ecfeff
+                );
+
+            border:
+                1px solid #dbeafe;
+
+            font-size: 26px;
+        }
+
+
+        .border-document-number {
+
+            color: #cbd5e1;
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+            letter-spacing: 1px;
+        }
+
+
+        .border-document-card h3 {
+
+            position: relative;
+
+            z-index: 2;
+
+            margin: 17px 0 7px;
+
+            color: #142033;
+
+            font-size: 18px;
+
+            font-weight: 900;
+
+            letter-spacing: -0.3px;
+        }
+
+
+        .border-document-card p {
+
+            position: relative;
+
+            z-index: 2;
+
+            max-width: 470px;
+
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           SELECT BUTTON
+        ====================================================== */
+
+        .border-select-button {
+
+            position: relative;
+
+            z-index: 3;
+
+            width: 100%;
+
+            min-height: 43px;
+
+            margin-top: 21px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            border-radius: 10px;
+
+            background:
+                #eff6ff;
+
+            border:
+                1px solid #dbeafe;
+
+            color: #1d4ed8;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 850;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .border-select-button:hover {
+
+            background:
+                #2563eb;
+
+            border-color:
+                #2563eb;
+
+            color: #ffffff;
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        .border-select-arrow {
+
+            font-size: 15px;
+
+            transition:
+                transform 0.2s ease;
+        }
+
+
+        .border-select-button:hover
+        .border-select-arrow {
+
+            transform:
+                translateX(3px);
+        }
+
+
+        /* =====================================================
+           DOCUMENT COLOR VARIANTS
+        ====================================================== */
+
+        .border-card-passport
+        .border-document-icon {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #dbeafe
+                );
+
+            border-color:
+                #bfdbfe;
+        }
+
+
+        .border-card-visa
+        .border-document-icon {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ecfeff,
+                    #cffafe
+                );
+
+            border-color:
+                #a5f3fc;
+        }
+
+
+        .border-card-id
+        .border-document-icon {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f5f3ff,
+                    #ede9fe
+                );
+
+            border-color:
+                #ddd6fe;
+        }
+
+
+        .border-card-permit
+        .border-document-icon {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #fff7ed,
+                    #ffedd5
+                );
+
+            border-color:
+                #fed7aa;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ====================================================== */
+
+        .border-footer {
+
+            margin-top: 28px;
+
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 10px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 850px) {
+
+            .border-hero-badge {
+
+                display: none;
+            }
+        }
+
+
+        @media (max-width: 700px) {
+
+            .border-topbar {
+
+                padding:
+                    0 4%;
+            }
+
+
+            .border-officer {
+
+                font-size: 10px;
+
+                padding:
+                    7px 9px;
+            }
+
+
+            .border-container {
+
+                width: 94%;
+
+                padding-top: 26px;
+            }
+
+
+            .border-hero {
+
+                padding: 24px;
+            }
+
+
+            .border-document-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .border-section-header {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 10px;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+
+            .border-brand {
+
+                font-size: 17px;
+            }
+
+
+            .border-brand-icon {
+
+                width: 35px;
+                height: 35px;
+            }
+
+
+            .border-officer {
+
+                display: none;
+            }
+
+
+            .border-hero h1 {
+
+                font-size: 28px;
+            }
+
+
+            .border-document-card {
+
+                min-height: 230px;
+
+                padding: 21px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="border-page">
+
+
+    <!-- =====================================================
+         TOP NAVIGATION
+    ====================================================== -->
+
+    <header class="border-topbar">
+
+
+        <div class="border-brand">
+
+
+            <span class="border-brand-icon">
+                🛡
+            </span>
+
+
+            IdentityGuard AI
+
+
+        </div>
+
+
+        <div class="border-officer">
+
+
+            <span class="border-officer-icon">
+                🛂
+            </span>
+
+
+            Border Checkpoint
+
+
+        </div>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="border-container">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="border-hero">
+
+
+            <div class="border-hero-content">
+
+
+                <div class="border-eyebrow">
+
+
+                    <span class="border-eyebrow-dot"></span>
+
+
+                    Border Verification
+
+
+                </div>
+
+
+                <h1>
+                    Border Document Screening
+                </h1>
+
+
+                <p>
+
+                    Select the document type you want to verify.
+
+                </p>
+
+
+            </div>
+
+
+            <div class="border-hero-badge">
+
+                🔐
+
+                Secure Verification
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             DOCUMENT SELECTION HEADER
+        ================================================== -->
+
+        <div class="border-section-header">
+
+
+            <div>
+
+
+                <h2>
+                    Select Document Type
+                </h2>
+
+
+                <p>
+                    Choose the document you want to submit for screening.
+                </p>
+
+
+            </div>
+
+
+            <div class="border-status">
+
+
+                <span class="border-status-dot"></span>
+
+
+                System Ready
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             DOCUMENT CARDS
+        ================================================== -->
+
+        <section class="border-document-grid">
+
+
+            <!-- PASSPORT -->
+
+            <article
+                class="border-document-card border-card-passport"
+            >
+
+
+                <div>
+
+
+                    <div class="border-card-top">
+
+
+                        <div class="border-document-icon">
+                            📘
+                        </div>
+
+
+                        <div class="border-document-number">
+                            01
+                        </div>
+
+
+                    </div>
+
+
+                    <h3>
+                        Passport
+                    </h3>
+
+
+                    <p>
+
+                        Extract and verify passport identity
+                        information and travel credentials.
+
+                    </p>
+
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('upload', document_type='passport') }}"
+                    class="border-select-button"
+                >
+
+                    Select Passport
+
+                    <span class="border-select-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+            </article>
+
+
+
+            <!-- VISA -->
+
+            <article
+                class="border-document-card border-card-visa"
+            >
+
+
+                <div>
+
+
+                    <div class="border-card-top">
+
+
+                        <div class="border-document-icon">
+                            📄
+                        </div>
+
+
+                        <div class="border-document-number">
+                            02
+                        </div>
+
+
+                    </div>
+
+
+                    <h3>
+                        Visa
+                    </h3>
+
+
+                    <p>
+
+                        Verify visa details, entry permissions,
+                        stamps and validity information.
+
+                    </p>
+
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('upload', document_type='visa') }}"
+                    class="border-select-button"
+                >
+
+                    Select Visa
+
+                    <span class="border-select-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+            </article>
+
+
+
+            <!-- NATIONAL ID -->
+
+            <article
+                class="border-document-card border-card-id"
+            >
+
+
+                <div>
+
+
+                    <div class="border-card-top">
+
+
+                        <div class="border-document-icon">
+                            🪪
+                        </div>
+
+
+                        <div class="border-document-number">
+                            03
+                        </div>
+
+
+                    </div>
+
+
+                    <h3>
+                        National ID
+                    </h3>
+
+
+                    <p>
+
+                        Validate government-issued identity
+                        credentials and supporting information.
+
+                    </p>
+
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('upload', document_type='national-id') }}"
+                    class="border-select-button"
+                >
+
+                    Select ID
+
+                    <span class="border-select-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+            </article>
+
+
+
+            <!-- TRAVEL PERMIT -->
+
+            <article
+                class="border-document-card border-card-permit"
+            >
+
+
+                <div>
+
+
+                    <div class="border-card-top">
+
+
+                        <div class="border-document-icon">
+                            📋
+                        </div>
+
+
+                        <div class="border-document-number">
+                            04
+                        </div>
+
+
+                    </div>
+
+
+                    <h3>
+                        Travel Permit
+                    </h3>
+
+
+                    <p>
+
+                        Screen travel permits and authorization
+                        documents.
+
+                    </p>
+
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('upload', document_type='permit') }}"
+                    class="border-select-button"
+                >
+
+                    Select Permit
+
+                    <span class="border-select-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <div class="border-footer">
+
+            IdentityGuard AI · Border Verification Portal
+
+            <br>
+
+            AI-assisted screening for authorized personnel
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

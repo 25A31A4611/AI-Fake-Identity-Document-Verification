@@ -1,10 +1,37 @@
-# Python cache
+# Python
+venv/
+.venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Uploaded identity documents
-uploads/
-uploadS/
-
-# Environment/secrets
+# Environment variables
 .env
+.env.*
+
+# Database
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+dist/
+build/
+
+# Uploaded files
+uploads/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test / cache files
+.pytest_cache/
+.mypy_cache/

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Final Decision - IdentityGuard AI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <div class="card">
+
+            <h1>Final Decision</h1>
+
+            <p class="subtitle">
+                IdentityGuard AI - Officer Decision Recorded
+            </p>
+
+            <div class="decision-success">
+                ✓ Decision Successfully Recorded
+            </div>
+
+            <div class="result-section">
+
+                <h2>Verification Summary</h2>
+
+                <div class="info-row">
+                    <span>Document Type</span>
+                    <strong>{{ document_type }}</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Officer Decision</span>
+                    <strong>{{ officer_decision }}</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>System Status</span>
+                    <strong>Completed</strong>
+                </div>
+
+            </div>
+
+            <div class="demo-note">
+                <strong>Demo Mode</strong>
+                <p>
+                    This result is simulated for prototype demonstration.
+                    Real OCR, tampering detection, face verification and
+                    database validation will be integrated later.
+                </p>
+            </div>
+
+            <div class="button-group">
+
+                <a href="{{ url_for('dashboard') }}" class="btn-primary">
+                    Back to Dashboard
+                </a>
+
+                <a href="{{ url_for('border') }}" class="btn-secondary">
+                    New Verification
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

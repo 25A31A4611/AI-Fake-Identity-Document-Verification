@@ -5,88 +5,87 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Officer Access | AI Screen</title>
+    <title>Officer Login | IdentityGuard AI</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 
 </head>
 
-<body>
 
-    <nav class="navbar">
+<body class="login-page">
 
-        <div class="logo">
-            AI<span>SCREEN</span>
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="login-logo">
+                🛡
+            </div>
+
+            <h1>IdentityGuard AI</h1>
+
+            <p class="login-subtitle">
+                Authorized Officer Access
+            </p>
+
+
+            <form action="/login" method="POST">
+
+                <div class="form-group">
+
+                    <label>
+                        Officer ID
+                    </label>
+
+                    <input
+                        type="text"
+                        name="officer_id"
+                        placeholder="Enter Officer ID"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Enter Password"
+                        required
+                    >
+
+                </div>
+
+
+                <button type="submit"
+                        class="login-button">
+
+                    Secure Login
+
+                </button>
+
+            </form>
+
+
+            <p class="security-text">
+
+                🔒 Secure access for authorized personnel only
+
+            </p>
+
         </div>
 
-        <div class="nav-status">
-            ● SECURE ACCESS
-        </div>
-
-    </nav>
-
-
-    <section class="hero">
-
-        <div class="badge">
-            AUTHORIZED OFFICER ACCESS
-        </div>
-
-        <h1>
-            Officer <span>Sign In</span>
-        </h1>
-
-        <p>
-            Enter your registered details to access
-            the identity screening console.
-        </p>
-
-
-        <form action="/human-check" method="GET" style="width: 100%; max-width: 450px;">
-
-            <input type="tel" placeholder="Phone Number" required style="width:100%; padding:15px; margin-bottom:15px;
-                border-radius:8px; border:1px solid #203047;
-                background:#0b1829; color:white;">
-
-
-            <input type="email" placeholder="Official Email" required style="width:100%; padding:15px; margin-bottom:15px;
-                border-radius:8px; border:1px solid #203047;
-                background:#0b1829; color:white;">
-
-
-            <input type="tel" placeholder="Registration Mobile Number" required style="width:100%; padding:15px; margin-bottom:20px;
-                border-radius:8px; border:1px solid #203047;
-                background:#0b1829; color:white;">
-
-
-            <label style="display:block; text-align:left;
-                          color:#aab7c8; margin-bottom:25px;">
-
-                <input type="checkbox" required>
-
-                I confirm that I am an authorized officer.
-
-            </label>
-
-
-            <button type="submit" class="start-btn" style="border:none; cursor:pointer;">
-
-                SEND ACCESS →
-
-            </button>
-
-        </form>
-
-    </section>
-
-
-    <footer class="footer">
-
-        AI Identity Screening System • SIH 2026 Prototype
-
-    </footer>
+    </div>
 
 </body>
 

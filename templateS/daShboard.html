@@ -5,214 +5,1359 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Screening Console | AI Screen</title>
+    <title>IdentityGuard AI | Dashboard</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =====================================================
+           DASHBOARD PAGE
+        ====================================================== */
+
+        .dashboard-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 5% 0%,
+                    rgba(37, 99, 235, 0.08),
+                    transparent 28%
+                ),
+
+                radial-gradient(
+                    circle at 95% 15%,
+                    rgba(6, 182, 212, 0.07),
+                    transparent 25%
+                ),
+
+                #f3f7fc;
+
+            color: #142033;
+        }
+
+
+        /* =====================================================
+           TOP NAVIGATION
+        ====================================================== */
+
+        .dashboard-topbar {
+            min-height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background:
+                rgba(7, 17, 31, 0.98);
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 8px 28px rgba(7, 17, 31, 0.16);
+        }
+
+
+        .dashboard-brand {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+            font-weight: 900;
+
+            letter-spacing: -0.3px;
+        }
+
+
+        .dashboard-brand-icon {
+            width: 39px;
+            height: 39px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
+
+            box-shadow:
+                0 7px 18px rgba(37, 99, 235, 0.30);
+        }
+
+
+        .dashboard-officer {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            color: #cbd5e1;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+
+        .dashboard-officer-icon {
+            width: 35px;
+            height: 35px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.12);
+
+            font-size: 16px;
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ====================================================== */
+
+        .dashboard-container {
+            width: min(1150px, 92%);
+
+            margin: 0 auto;
+
+            padding: 42px 0 65px;
+        }
+
+
+        /* =====================================================
+           HERO
+        ====================================================== */
+
+        .dashboard-hero {
+            position: relative;
+            overflow: hidden;
+
+            padding: 34px;
+
+            margin-bottom: 25px;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f 0%,
+                    #102b49 60%,
+                    #12395a 100%
+                );
+
+            color: #ffffff;
+
+            box-shadow:
+                0 17px 38px rgba(7, 17, 31, 0.16);
+        }
+
+
+        .dashboard-hero::before {
+            content: "";
+
+            position: absolute;
+
+            width: 430px;
+            height: 430px;
+
+            right: -190px;
+            top: -230px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(6, 182, 212, 0.22),
+                    transparent 68%
+                );
+        }
+
+
+        .dashboard-hero::after {
+            content: "";
+
+            position: absolute;
+
+            width: 250px;
+            height: 250px;
+
+            right: 180px;
+            bottom: -210px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37, 99, 235, 0.18),
+                    transparent 70%
+                );
+        }
+
+
+        .dashboard-hero-content {
+            position: relative;
+
+            z-index: 2;
+
+            max-width: 760px;
+        }
+
+
+        .dashboard-eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 6px 11px;
+
+            margin-bottom: 13px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.12);
+
+            color: #bae6fd;
+
+            font-size: 10px;
+            font-weight: 850;
+
+            letter-spacing: 0.9px;
+
+            text-transform: uppercase;
+        }
+
+
+        .dashboard-eyebrow-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #38bdf8;
+
+            box-shadow:
+                0 0 0 4px rgba(56, 189, 248, 0.10);
+        }
+
+
+        .dashboard-hero h1 {
+            margin: 0 0 9px;
+
+            font-size: clamp(29px, 4vw, 42px);
+
+            line-height: 1.08;
+
+            letter-spacing: -1.2px;
+
+            font-weight: 900;
+        }
+
+
+        .dashboard-hero p {
+            max-width: 700px;
+
+            margin: 0;
+
+            color: #cbd5e1;
+
+            font-size: 14px;
+
+            line-height: 1.75;
+        }
+
+
+        .dashboard-security-badge {
+            position: absolute;
+
+            right: 34px;
+            bottom: 28px;
+
+            z-index: 3;
+
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 10px 13px;
+
+            border-radius: 12px;
+
+            color: #dbeafe;
+
+            background:
+                rgba(255, 255, 255, 0.07);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.11);
+
+            font-size: 11px;
+            font-weight: 750;
+
+            backdrop-filter: blur(8px);
+        }
+
+
+        /* =====================================================
+           SECTION HEADER
+        ====================================================== */
+
+        .dashboard-section-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            margin-bottom: 15px;
+        }
+
+
+        .dashboard-section-header h2 {
+            margin: 0;
+
+            color: #142033;
+
+            font-size: 20px;
+            font-weight: 900;
+
+            letter-spacing: -0.4px;
+        }
+
+
+        .dashboard-section-header p {
+            margin: 4px 0 0;
+
+            color: #64748b;
+
+            font-size: 12px;
+        }
+
+
+        .dashboard-status {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 7px 11px;
+
+            border-radius: 999px;
+
+            background: #ecfdf5;
+
+            border:
+                1px solid #bbf7d0;
+
+            color: #166534;
+
+            font-size: 10px;
+            font-weight: 850;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.4px;
+        }
+
+
+        .dashboard-status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+        }
+
+
+        /* =====================================================
+           VERIFICATION GRID
+        ====================================================== */
+
+        .verification-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 17px;
+        }
+
+
+        /* =====================================================
+           VERIFICATION CARD
+        ====================================================== */
+
+        .verification-card {
+            position: relative;
+            overflow: hidden;
+
+            min-height: 215px;
+
+            padding: 24px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 7px 23px rgba(15, 23, 42, 0.045);
+
+            transition:
+                transform 0.22s ease,
+                box-shadow 0.22s ease,
+                border-color 0.22s ease;
+        }
+
+
+        .verification-card::before {
+            content: "";
+
+            position: absolute;
+
+            width: 160px;
+            height: 160px;
+
+            right: -75px;
+            top: -75px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37, 99, 235, 0.08),
+                    transparent 68%
+                );
+
+            pointer-events: none;
+        }
+
+
+        .verification-card:hover {
+            transform: translateY(-4px);
+
+            border-color: #bfdbfe;
+
+            box-shadow:
+                0 16px 34px rgba(15, 23, 42, 0.09);
+        }
+
+
+        .verification-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+
+            gap: 15px;
+        }
+
+
+        .verification-icon {
+            width: 50px;
+            height: 50px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #ecfeff
+                );
+
+            border:
+                1px solid #dbeafe;
+
+            font-size: 24px;
+        }
+
+
+        .verification-number {
+            color: #cbd5e1;
+
+            font-size: 11px;
+            font-weight: 900;
+
+            letter-spacing: 1px;
+        }
+
+
+        .verification-card h3 {
+            margin: 17px 0 7px;
+
+            color: #142033;
+
+            font-size: 18px;
+            font-weight: 900;
+
+            letter-spacing: -0.3px;
+        }
+
+
+        .verification-card p {
+            max-width: 430px;
+
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 12px;
+
+            line-height: 1.65;
+        }
+
+
+        .verification-action {
+            margin-top: 21px;
+        }
+
+
+        .verification-button,
+        .verification-button-disabled {
+
+            width: 100%;
+
+            min-height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            border-radius: 10px;
+
+            font-size: 12px;
+            font-weight: 850;
+
+            text-decoration: none;
+
+            box-sizing: border-box;
+        }
+
+
+        .verification-button {
+            background: #eff6ff;
+
+            border:
+                1px solid #dbeafe;
+
+            color: #1d4ed8;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .verification-button:hover {
+            background: #2563eb;
+
+            border-color: #2563eb;
+
+            color: #ffffff;
+        }
+
+
+        .verification-button-disabled {
+            background: #f8fafc;
+
+            border:
+                1px solid #e2e8f0;
+
+            color: #94a3b8;
+
+            cursor: default;
+        }
+
+
+        /* =====================================================
+           ACTIVE WORKFLOW BUTTON
+        ====================================================== */
+
+        .verification-card.immigration .verification-button {
+            background: #ecfeff;
+            border-color: #ccfbf1;
+            color: #0f766e;
+        }
+
+
+        .verification-card.immigration .verification-button:hover {
+            background: #0f766e;
+            border-color: #0f766e;
+            color: #ffffff;
+        }
+
+
+        .verification-card.traffic .verification-button {
+            background: #fff7ed;
+            border-color: #fed7aa;
+            color: #c2410c;
+        }
+
+
+        .verification-card.traffic .verification-button:hover {
+            background: #ea580c;
+            border-color: #ea580c;
+            color: #ffffff;
+        }
+
+
+        .verification-card.banking .verification-button {
+            background: #f5f3ff;
+            border-color: #ddd6fe;
+            color: #6d28d9;
+        }
+
+
+        .verification-card.banking .verification-button:hover {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: #ffffff;
+        }
+
+
+        /* =====================================================
+           CARD VARIANTS
+        ====================================================== */
+
+        .verification-card.immigration .verification-icon {
+            background:
+                linear-gradient(
+                    135deg,
+                    #ecfeff,
+                    #f0fdfa
+                );
+
+            border-color:
+                #ccfbf1;
+        }
+
+
+        .verification-card.traffic .verification-icon {
+            background:
+                linear-gradient(
+                    135deg,
+                    #fff7ed,
+                    #fffbeb
+                );
+
+            border-color:
+                #fed7aa;
+        }
+
+
+        .verification-card.banking .verification-icon {
+            background:
+                linear-gradient(
+                    135deg,
+                    #f5f3ff,
+                    #eff6ff
+                );
+
+            border-color:
+                #ddd6fe;
+        }
+
+
+        /* =====================================================
+           INFO PANEL
+        ====================================================== */
+
+        .dashboard-info {
+            display: grid;
+
+            grid-template-columns:
+                1.3fr 1fr;
+
+            gap: 17px;
+
+            margin-top: 18px;
+        }
+
+
+        .dashboard-info-card {
+            padding: 22px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 17px;
+
+            box-shadow:
+                0 6px 20px rgba(15, 23, 42, 0.035);
+        }
+
+
+        .dashboard-info-title {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 13px;
+
+            color: #334155;
+
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+
+        .dashboard-info-icon {
+            width: 30px;
+            height: 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background: #f1f5f9;
+
+            font-size: 14px;
+        }
+
+
+        .dashboard-info-card p {
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 11px;
+
+            line-height: 1.7;
+        }
+
+
+        .dashboard-feature-list {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 9px;
+
+            margin-top: 13px;
+        }
+
+
+        .dashboard-feature {
+            padding: 10px 11px;
+
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            border:
+                1px solid #edf2f7;
+
+            color: #475569;
+
+            font-size: 10px;
+            font-weight: 750;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ====================================================== */
+
+        .dashboard-footer {
+            margin-top: 28px;
+
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 10px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 850px) {
+
+            .dashboard-security-badge {
+                display: none;
+            }
+
+            .dashboard-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .dashboard-topbar {
+                padding: 0 4%;
+            }
+
+            .dashboard-officer span {
+                display: none;
+            }
+
+            .dashboard-container {
+                width: 94%;
+                padding-top: 25px;
+            }
+
+            .dashboard-hero {
+                padding: 24px;
+            }
+
+            .verification-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-section-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 10px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .dashboard-brand {
+                font-size: 17px;
+            }
+
+            .dashboard-brand-icon {
+                width: 35px;
+                height: 35px;
+            }
+
+            .dashboard-hero h1 {
+                font-size: 28px;
+            }
+
+            .dashboard-feature-list {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
 
 </head>
 
 
 <body>
 
-    <!-- NAVBAR -->
-
-    <nav class="navbar">
-
-        <div class="logo">
-            AI<span>SCREEN</span>
-        </div>
-
-        <div class="nav-status">
-            ● SCREENING CONSOLE ONLINE
-        </div>
-
-    </nav>
+<div class="dashboard-page">
 
 
-    <!-- DASHBOARD -->
+    <!-- =====================================================
+         TOP NAVIGATION
+    ====================================================== -->
 
-    <section class="sectors" style="min-height:75vh;">
+    <header class="dashboard-topbar">
 
-        <div class="badge">
-            AUTHORIZED SCREENING CONSOLE
-        </div>
+        <div class="dashboard-brand">
 
-
-        <h1 style="font-size:42px; margin-bottom:15px;">
-            Welcome to the <span style="color:#35d0ff;">
-                Screening Dashboard
+            <span class="dashboard-brand-icon">
+                🛡
             </span>
-        </h1>
 
-
-        <p style="
-            color:#aab7c8;
-            max-width:650px;
-            margin:0 auto 40px;
-            line-height:1.6;
-        ">
-
-            Select the operational sector where identity
-            or document screening needs to be performed.
-
-        </p>
-
-
-        <!-- SECTOR CARDS -->
-
-        <div class="sector-grid">
-
-
-            <a href="/airport" class="sector-card" style="text-decoration:none;">
-
-                <div style="font-size:35px;">
-                    ✈️
-                </div>
-
-                <br>
-
-                <strong>Airport Security</strong>
-
-                <p style="
-                    margin-top:10px;
-                    color:#8fa0b5;
-                    font-size:13px;
-                ">
-
-                    Passport • Visa • Identity
-
-                </p>
-
-            </a>
-
-
-            <a href="/traffic" class="sector-card" style="text-decoration:none;">
-
-                <div style="font-size:35px;">
-                    🚦
-                </div>
-
-                <br>
-
-                <strong>Traffic Enforcement</strong>
-
-                <p style="
-                    margin-top:10px;
-                    color:#8fa0b5;
-                    font-size:13px;
-                ">
-
-                    Driving License • Identity
-
-                </p>
-
-            </a>
-
-
-            <a href="/banking" class="sector-card" style="text-decoration:none;">
-
-                <div style="font-size:35px;">
-                    🏦
-                </div>
-
-                <br>
-
-                <strong>Banking</strong>
-
-                <p style="
-                    margin-top:10px;
-                    color:#8fa0b5;
-                    font-size:13px;
-                ">
-
-                    Customer Identity • Documents
-
-                </p>
-
-            </a>
-
-
-            <a href="/border" class="sector-card" style="text-decoration:none;">
-
-                <div style="font-size:35px;">
-                    🛂
-                </div>
-
-                <br>
-
-                <strong>Border Integrity</strong>
-
-                <p style="
-                    margin-top:10px;
-                    color:#8fa0b5;
-                    font-size:13px;
-                ">
-
-                    Travel Documents • Identity
-
-                </p>
-
-            </a>
-
-
-            <a href="/government" class="sector-card" style="text-decoration:none;">
-
-                <div style="font-size:35px;">
-                    🏛️
-                </div>
-
-                <br>
-
-                <strong>Government Services</strong>
-
-                <p style="
-                    margin-top:10px;
-                    color:#8fa0b5;
-                    font-size:13px;
-                ">
-
-                    Identity • Certificates • Documents
-
-                </p>
-
-            </a>
-
+            IdentityGuard AI
 
         </div>
 
 
-        <!-- SYSTEM STATUS -->
+        <div class="dashboard-officer">
 
-        <div style="
-            margin-top:45px;
-            padding:20px;
-            background:#0b1829;
-            border:1px solid #203047;
-            border-radius:10px;
-            color:#aab7c8;
-        ">
+            <span>
+                Authorized Officer Portal
+            </span>
 
-            <strong style="color:#79e6a8;">
-                ● AI SCREENING ENGINE READY
-            </strong>
-
-            <br><br>
-
-            OCR • Validation • Forensics • Biometrics
-            • Cross-Document Analysis • Risk Scoring
+            <span class="dashboard-officer-icon">
+                👮
+            </span>
 
         </div>
 
-    </section>
+    </header>
 
 
-    <footer class="footer">
 
-        AI Identity Screening System • SIH 2026 Prototype
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
-    </footer>
+    <main class="dashboard-container">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="dashboard-hero">
+
+            <div class="dashboard-hero-content">
+
+                <div class="dashboard-eyebrow">
+
+                    <span class="dashboard-eyebrow-dot"></span>
+
+                    Secure Verification Environment
+
+                </div>
+
+
+                <h1>
+                    Verification Dashboard
+                </h1>
+
+
+                <p>
+
+                    Select a verification workflow to begin
+                    identity screening, document analysis and
+                    AI-assisted risk assessment.
+
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-security-badge">
+
+                🔐
+
+                Protected Screening Environment
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             VERIFICATION OPTIONS
+        ================================================== -->
+
+        <div class="dashboard-section-header">
+
+            <div>
+
+                <h2>
+                    Verification Services
+                </h2>
+
+                <p>
+                    Choose the workflow required for your screening operation.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-status">
+
+                <span class="dashboard-status-dot"></span>
+
+                System Ready
+
+            </div>
+
+        </div>
+
+
+
+        <section class="verification-grid">
+
+
+            <!-- =============================================
+                 BORDER CHECKPOINT
+            ============================================== -->
+
+            <article class="verification-card">
+
+                <div>
+
+                    <div class="verification-card-top">
+
+                        <div class="verification-icon">
+                            🛂
+                        </div>
+
+                        <div class="verification-number">
+                            01
+                        </div>
+
+                    </div>
+
+
+                    <h3>
+                        Border Checkpoint
+                    </h3>
+
+
+                    <p>
+                        Screen passports, visas and supporting
+                        identity documents for border verification.
+                    </p>
+
+                </div>
+
+
+                <div class="verification-action">
+
+                    <a
+                        href="{{ url_for('border') }}"
+                        class="verification-button"
+                    >
+
+                        Start Border Verification
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- =============================================
+                 IMMIGRATION
+            ============================================== -->
+
+            <article class="verification-card immigration">
+
+                <div>
+
+                    <div class="verification-card-top">
+
+                        <div class="verification-icon">
+                            🌐
+                        </div>
+
+                        <div class="verification-number">
+                            02
+                        </div>
+
+                    </div>
+
+
+                    <h3>
+                        Immigration
+                    </h3>
+
+
+                    <p>
+                        Review passports, visas and residency
+                        documentation for immigration workflows.
+                    </p>
+
+                </div>
+
+
+                <div class="verification-action">
+
+                    <a
+                        href="{{ url_for('immigration') }}"
+                        class="verification-button"
+                    >
+
+                        Open Immigration Workflow
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- =============================================
+                 TRAFFIC
+            ============================================== -->
+
+            <article class="verification-card traffic">
+
+                <div>
+
+                    <div class="verification-card-top">
+
+                        <div class="verification-icon">
+                            🚘
+                        </div>
+
+                        <div class="verification-number">
+                            03
+                        </div>
+
+                    </div>
+
+
+                    <h3>
+                        Traffic Verification
+                    </h3>
+
+
+                    <p>
+                        Verify driving identity and vehicle-related
+                        documentation during traffic checks.
+                    </p>
+
+                </div>
+
+
+                <div class="verification-action">
+
+                    <a
+                        href="{{ url_for('traffic') }}"
+                        class="verification-button"
+                    >
+
+                        Open Traffic Workflow
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- =============================================
+                 BANKING / KYC
+            ============================================== -->
+
+            <article class="verification-card banking">
+
+                <div>
+
+                    <div class="verification-card-top">
+
+                        <div class="verification-icon">
+                            🏦
+                        </div>
+
+                        <div class="verification-number">
+                            04
+                        </div>
+
+                    </div>
+
+
+                    <h3>
+                        Banking &amp; KYC
+                    </h3>
+
+
+                    <p>
+                        Support identity document screening for
+                        customer onboarding and KYC workflows.
+                    </p>
+
+                </div>
+
+
+                <div class="verification-action">
+
+                    <a
+                        href="{{ url_for('kyc') }}"
+                        class="verification-button"
+                    >
+
+                        Open KYC Workflow
+
+                        <span>
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             INFORMATION PANELS
+        ================================================== -->
+
+        <section class="dashboard-info">
+
+
+            <div class="dashboard-info-card">
+
+                <div class="dashboard-info-title">
+
+                    <span class="dashboard-info-icon">
+                        🤖
+                    </span>
+
+                    AI Screening Capabilities
+
+                </div>
+
+
+                <p>
+
+                    IdentityGuard AI combines multiple screening
+                    components to assist authorized personnel
+                    during identity verification.
+
+                </p>
+
+
+                <div class="dashboard-feature-list">
+
+                    <div class="dashboard-feature">
+                        ✓ OCR Extraction
+                    </div>
+
+                    <div class="dashboard-feature">
+                        ✓ Document Validation
+                    </div>
+
+                    <div class="dashboard-feature">
+                        ✓ Tampering Analysis
+                    </div>
+
+                    <div class="dashboard-feature">
+                        ✓ Face Verification
+                    </div>
+
+                    <div class="dashboard-feature">
+                        ✓ Liveness Analysis
+                    </div>
+
+                    <div class="dashboard-feature">
+                        ✓ Risk Assessment
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="dashboard-info-card">
+
+                <div class="dashboard-info-title">
+
+                    <span class="dashboard-info-icon">
+                        🔒
+                    </span>
+
+                    Officer Review
+
+                </div>
+
+
+                <p>
+
+                    Automated screening results are intended to
+                    support the review process. Final decisions
+                    remain with the authorized officer.
+
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <div class="dashboard-footer">
+
+            IdentityGuard AI · Secure Identity Screening Platform
+
+            <br>
+
+            AI-assisted verification for authorized personnel
+
+        </div>
+
+
+    </main>
+
+</div>
+
 
 </body>
 

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>IdentityGuard AI | Traffic Verification</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        .workflow-page {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 5% 0%,
+                    rgba(249,115,22,0.08),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 95% 10%,
+                    rgba(245,158,11,0.07),
+                    transparent 25%
+                ),
+                #f3f7fc;
+
+            color: #142033;
+        }
+
+
+        .workflow-topbar {
+            min-height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background: rgba(7,17,31,0.98);
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.08);
+
+            box-shadow:
+                0 8px 28px rgba(7,17,31,0.16);
+        }
+
+
+        .workflow-brand {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+
+        .workflow-brand-icon {
+            width: 39px;
+            height: 39px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #06b6d4
+                );
+        }
+
+
+        .workflow-back {
+            color: #cbd5e1;
+
+            text-decoration: none;
+
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+
+        .workflow-back:hover {
+            color: #ffffff;
+        }
+
+
+        .workflow-container {
+            width: min(1050px,92%);
+
+            margin: 0 auto;
+
+            padding: 42px 0 70px;
+        }
+
+
+        .workflow-header {
+            margin-bottom: 24px;
+        }
+
+
+        .workflow-eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 6px 11px;
+
+            margin-bottom: 12px;
+
+            border-radius: 999px;
+
+            background: #fff7ed;
+
+            border: 1px solid #fed7aa;
+
+            color: #c2410c;
+
+            font-size: 10px;
+            font-weight: 850;
+
+            letter-spacing: 0.7px;
+
+            text-transform: uppercase;
+        }
+
+
+        .workflow-header h1 {
+            margin: 0 0 9px;
+
+            color: #142033;
+
+            font-size: clamp(28px,4vw,39px);
+
+            font-weight: 900;
+
+            letter-spacing: -1px;
+        }
+
+
+        .workflow-header p {
+            max-width: 700px;
+
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+
+        .workflow-grid {
+            display: grid;
+
+            grid-template-columns: 1.25fr 0.75fr;
+
+            gap: 18px;
+        }
+
+
+        .workflow-card {
+            padding: 26px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 8px 25px rgba(15,23,42,0.045);
+        }
+
+
+        .workflow-card h2 {
+            margin: 0 0 7px;
+
+            color: #142033;
+
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+
+        .workflow-card-description {
+            margin: 0 0 22px;
+
+            color: #64748b;
+
+            font-size: 11px;
+
+            line-height: 1.7;
+        }
+
+
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+
+        .field-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #334155;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+
+        .field-group select,
+        .field-group input {
+            width: 100%;
+
+            min-height: 42px;
+
+            padding: 0 12px;
+
+            box-sizing: border-box;
+
+            border:
+                1px solid #dbe3ec;
+
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            color: #334155;
+
+            font-size: 11px;
+
+            outline: none;
+        }
+
+
+        .field-group select:focus,
+        .field-group input:focus {
+            border-color: #fb923c;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 0 0 3px rgba(249,115,22,0.08);
+        }
+
+
+        .upload-zone {
+            padding: 25px 20px;
+
+            text-align: center;
+
+            border:
+                1.5px dashed #fdba74;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #fff7ed,
+                    #fffbeb
+                );
+        }
+
+
+        .upload-zone-icon {
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .upload-zone h3 {
+            margin: 0 0 5px;
+
+            color: #334155;
+
+            font-size: 13px;
+        }
+
+
+        .upload-zone p {
+            margin: 0;
+
+            color: #94a3b8;
+
+            font-size: 10px;
+        }
+
+
+        .workflow-button {
+            width: 100%;
+
+            min-height: 45px;
+
+            margin-top: 20px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            background: #ea580c;
+
+            color: #ffffff;
+
+            font-size: 12px;
+
+            font-weight: 850;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 18px rgba(234,88,12,0.18);
+        }
+
+
+        .workflow-button:hover {
+            background: #c2410c;
+        }
+
+
+        .checklist {
+            display: grid;
+
+            gap: 10px;
+        }
+
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+
+            gap: 9px;
+
+            padding: 11px;
+
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            border: 1px solid #edf2f7;
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            line-height: 1.5;
+        }
+
+
+        .check-item span {
+            color: #ea580c;
+
+            font-weight: 900;
+        }
+
+
+        .workflow-notice {
+            margin-top: 18px;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            background: #eff6ff;
+
+            border: 1px solid #dbeafe;
+
+            color: #1e40af;
+
+            font-size: 10px;
+
+            line-height: 1.6;
+        }
+
+
+        @media (max-width:800px) {
+
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width:500px) {
+
+            .workflow-topbar {
+                padding: 0 4%;
+            }
+
+            .workflow-brand {
+                font-size: 17px;
+            }
+
+            .workflow-container {
+                width: 94%;
+                padding-top: 28px;
+            }
+
+            .workflow-card {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="workflow-page">
+
+
+    <header class="workflow-topbar">
+
+        <div class="workflow-brand">
+
+            <span class="workflow-brand-icon">
+                🛡
+            </span>
+
+            IdentityGuard AI
+
+        </div>
+
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="workflow-back"
+        >
+            ← Back to Dashboard
+        </a>
+
+    </header>
+
+
+
+    <main class="workflow-container">
+
+
+        <section class="workflow-header">
+
+            <div class="workflow-eyebrow">
+                🚘 Traffic Screening
+            </div>
+
+            <h1>
+                Traffic Verification
+            </h1>
+
+            <p>
+                Review driver identity and vehicle-related
+                documentation during traffic verification workflows.
+            </p>
+
+        </section>
+
+
+
+        <section class="workflow-grid">
+
+
+            <div class="workflow-card">
+
+                <h2>
+                    Verification Documents
+                </h2>
+
+                <p class="workflow-card-description">
+                    Select the document category and prepare the
+                    relevant driving or vehicle documentation.
+                </p>
+
+
+                <div class="field-group">
+
+                    <label for="document_type">
+                        Primary Document
+                    </label>
+
+                    <select id="document_type">
+
+                        <option>
+                            Driving Licence
+                        </option>
+
+                        <option>
+                            Vehicle Registration
+                        </option>
+
+                        <option>
+                            Insurance Document
+                        </option>
+
+                        <option>
+                            Other Supporting Document
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field-group">
+
+                    <label for="vehicle_number">
+                        Vehicle / Registration Number
+                    </label>
+
+                    <input
+                        id="vehicle_number"
+                        type="text"
+                        placeholder="Enter registration number"
+                    >
+
+                </div>
+
+
+                <div class="upload-zone">
+
+                    <div class="upload-zone-icon">
+                        📤
+                    </div>
+
+                    <h3>
+                        Traffic Documents
+                    </h3>
+
+                    <p>
+                        Upload processing will be connected to
+                        the verification engine in the next stage.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="workflow-button"
+                    onclick="alert('Traffic verification workflow is ready for document processing.')"
+                >
+                    Start Traffic Verification →
+                </button>
+
+            </div>
+
+
+
+            <aside class="workflow-card">
+
+                <h2>
+                    Screening Checklist
+                </h2>
+
+                <p class="workflow-card-description">
+                    Traffic screening can be organized around
+                    driver and vehicle identity checks.
+                </p>
+
+
+                <div class="checklist">
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Driving identity review
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Licence document review
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Vehicle document review
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        Document consistency checking
+                    </div>
+
+                    <div class="check-item">
+                        <span>✓</span>
+                        AI-assisted risk assessment
+                    </div>
+
+                </div>
+
+
+                <div class="workflow-notice">
+
+                    <strong>
+                        Officer Review
+                    </strong>
+
+                    <br>
+
+                    Screening results are intended to support
+                    authorized personnel during traffic checks.
+
+                </div>
+
+            </aside>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

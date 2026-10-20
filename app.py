@@ -1,260 +1,121 @@
-from flask import Flask, render_template, request, session
 import os
-import json
+import uuid
+
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash
+)
+
 from werkzeug.utils import secure_filename
 
-from ai.ocr import extract_text
-from ai.paSSport_parSer import extract_passport_fields
-from ai.validator import validate_passport
-from ai.forenSicS import analyze_document
-from ai.face_verification import detect_faces
-from ai.face_compariSon import compare_faces
+from backend.ocr.field_extraction import (
+    extract_document_fields
+)
 
-from ai.viSa_parSer import extract_visa_fields
-from ai.viSa_validator import validate_visa
-from ai.croSS_document import compare_documents
+from backend.validation.document_validation import (
+    validate_document
+)
 
-from ai.national_id_parSer import extract_national_id_fields
-from ai.national_id_validator import validate_national_id
-from ai.national_id_forenSicS import analyze_national_id
+from backend.tampering.tampering_detection import (
+    detect_tampering
+)
 
-from databaSe.reference_db import check_reference_database
+from backend.face.face_verification import (
+    compare_faces
+)
 
+from backend.risk.risk_engine import (
+    calculate_risk
+)
+
+from backend.liveness.liveness_detection import (
+    calculate_liveness_score
+)
+
+from backend.registry.database import (
+    initialize_database
+)
+
+from backend.registry.document_registry import (
+    verify_document,
+    save_verification_history
+)
+
+from backend.verification.cross_document import (
+    compare_documents
+)
+
+
+# ============================================================
+# FLASK APPLICATION
+# ============================================================
 
 app = Flask(__name__)
 
 
-# =========================================================
-# FLASK SESSION
-# =========================================================
+# ============================================================
+# INITIALIZE DATABASE
+# ============================================================
 
-app.secret_key = "sih-ai-screen-demo-secret"
+initialize_database()
 
 
-# =========================================================
-# APP CONFIGURATION
-# =========================================================
+app.config["SECRET_KEY"] = "identityguard-demo-secret-key"
 
+
+# Maximum upload size: 10 MB
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
+
+
+# ============================================================
+# UPLOAD CONFIGURATION
+# ============================================================
 
 UPLOAD_FOLDER = "uploads"
 
-PASSPORT_FOLDER = os.path.join(
-    UPLOAD_FOLDER,
-    "passports"
-)
+ALLOWED_EXTENSIONS = {
+    "png",
+    "jpg",
+    "jpeg"
+}
 
-VISA_FOLDER = os.path.join(
-    UPLOAD_FOLDER,
-    "visas"
-)
-
-NATIONAL_ID_FOLDER = os.path.join(
-    UPLOAD_FOLDER,
-    "national_id"
-)
-
-REFERENCE_FOLDER = os.path.join(
-    "demo_data",
-    "reference"
-)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
-# =========================================================
-# CREATE UPLOAD FOLDERS
-# =========================================================
-
+# Create upload folder automatically
 os.makedirs(
-    PASSPORT_FOLDER,
-    exist_ok=True
-)
-
-os.makedirs(
-    VISA_FOLDER,
-    exist_ok=True
-)
-
-os.makedirs(
-    NATIONAL_ID_FOLDER,
+    UPLOAD_FOLDER,
     exist_ok=True
 )
 
 
-# =========================================================
-# PASSPORT RISK CALCULATION
-# =========================================================
+# ============================================================
+# FILE VALIDATION
+# ============================================================
 
-def calculate_passport_risk(
-    validation_results,
-    forensic_results,
-    face_result
-):
+def allowed_file(filename):
 
-    score = 0
-    reasons = []
+    if not filename:
+        return False
 
-    # -----------------------------------------------------
-    # Validation results
-    # -----------------------------------------------------
+    if "." not in filename:
+        return False
 
-    for result in validation_results:
+    extension = filename.rsplit(
+        ".",
+        1
+    )[1].lower()
 
-        status = result.get(
-            "status",
-            ""
-        ).upper()
-
-        check = result.get(
-            "check",
-            "Validation check"
-        )
-
-        if status == "FAIL":
-
-            score += 25
-
-            reasons.append(
-                check + " failed."
-            )
-
-        elif status == "WARNING":
-
-            score += 10
-
-            reasons.append(
-                check + " requires review."
-            )
-
-        elif status == "REVIEW":
-
-            score += 15
-
-            reasons.append(
-                check + " requires additional review."
-            )
-
-    # -----------------------------------------------------
-    # Forensic results
-    # -----------------------------------------------------
-
-    for result in forensic_results:
-
-        status = result.get(
-            "status",
-            ""
-        ).upper()
-
-        check = result.get(
-            "check",
-            "Forensic check"
-        )
-
-        if status == "FAIL":
-
-            score += 30
-
-            reasons.append(
-                check + " failed."
-            )
-
-        elif status == "REVIEW":
-
-            score += 15
-
-            reasons.append(
-                check + " requires review."
-            )
-
-        elif status == "WARNING":
-
-            score += 10
-
-            reasons.append(
-                check + " produced a warning."
-            )
-
-    # -----------------------------------------------------
-    # Face detection
-    # -----------------------------------------------------
-
-    face_status = face_result.get(
-        "status",
-        ""
-    ).upper()
-
-    face_count = face_result.get(
-        "face_count",
-        0
-    )
-
-    if face_status == "FAIL":
-
-        score += 25
-
-        reasons.append(
-            "Face detection failed."
-        )
-
-    elif face_count == 0:
-
-        score += 20
-
-        reasons.append(
-            "No face detected."
-        )
-
-    elif face_count > 1:
-
-        score += 15
-
-        reasons.append(
-            "Multiple faces detected."
-        )
-
-    # -----------------------------------------------------
-    # Limit score
-    # -----------------------------------------------------
-
-    if score > 100:
-        score = 100
-
-    # -----------------------------------------------------
-    # Risk level
-    # -----------------------------------------------------
-
-    if score < 30:
-
-        level = "LOW"
-
-    elif score < 60:
-
-        level = "MEDIUM"
-
-    else:
-
-        level = "HIGH"
-
-    # -----------------------------------------------------
-    # Default reason
-    # -----------------------------------------------------
-
-    if not reasons:
-
-        reasons.append(
-            "No major risk signals detected "
-            "in the prototype screening."
-        )
-
-    return {
-        "score": score,
-        "level": level,
-        "reasons": reasons
-    }
+    return extension in ALLOWED_EXTENSIONS
 
 
-# =========================================================
-# HOME
-# =========================================================
+# ============================================================
+# HOME PAGE
+# ============================================================
 
 @app.route("/")
 def home():
@@ -264,45 +125,45 @@ def home():
     )
 
 
-# =========================================================
+# ============================================================
 # LOGIN
-# =========================================================
+# ============================================================
 
-@app.route("/login")
+@app.route(
+    "/login",
+    methods=["GET", "POST"]
+)
 def login():
+
+    if request.method == "POST":
+
+        officer_id = request.form.get(
+            "officer_id"
+        )
+
+        password = request.form.get(
+            "password"
+        )
+
+        # Prototype login
+        if officer_id and password:
+
+            return redirect(
+                url_for("dashboard")
+            )
+
+        flash(
+            "Please enter Officer ID and Password."
+        )
 
     return render_template(
         "login.html"
     )
 
 
-# =========================================================
-# HUMAN CHECK
-# =========================================================
-
-@app.route("/human-check")
-def human_check():
-
-    return render_template(
-        "human_check.html"
-    )
-
-
-# =========================================================
-# OVERRIDE
-# =========================================================
-
-@app.route("/override")
-def override():
-
-    return render_template(
-        "override.html"
-    )
-
-
-# =========================================================
+# ============================================================
 # DASHBOARD
-# =========================================================
+# ============================================================
 
 @app.route("/dashboard")
 def dashboard():
@@ -312,661 +173,832 @@ def dashboard():
     )
 
 
-# =========================================================
-# AIRPORT SECURITY
-# =========================================================
+# ============================================================
+# IMMIGRATION VERIFICATION
+# ============================================================
 
-@app.route("/airport")
-def airport():
-
-    return render_template(
-        "airport_screening.html"
-    )
-
-
-# =========================================================
-# PASSPORT SCREENING
-# =========================================================
-
-@app.route(
-    "/passport",
-    methods=["GET", "POST"]
-)
-def passport():
-
-    # -----------------------------------------------------
-    # GET request
-    # -----------------------------------------------------
-
-    if request.method == "GET":
-
-        return render_template(
-            "passport.html"
-        )
-
-    # -----------------------------------------------------
-    # Check file
-    # -----------------------------------------------------
-
-    if "passport" not in request.files:
-
-        return "No passport file uploaded."
-
-    file = request.files["passport"]
-
-    if file.filename == "":
-
-        return "No passport file selected."
-
-    # -----------------------------------------------------
-    # Save file
-    # -----------------------------------------------------
-
-    filename = secure_filename(
-        file.filename
-    )
-
-    filepath = os.path.join(
-        PASSPORT_FOLDER,
-        filename
-    )
-
-    file.save(filepath)
-
-    # -----------------------------------------------------
-    # OCR
-    # -----------------------------------------------------
-
-    ocr_text = extract_text(
-        filepath
-    )
-
-    print("")
-    print("==========================================")
-    print("           PASSPORT OCR TEXT")
-    print("==========================================")
-    print(ocr_text)
-    print("==========================================")
-    print("")
-
-    # -----------------------------------------------------
-    # Passport field extraction
-    # -----------------------------------------------------
-
-    passport_fields = extract_passport_fields(
-        ocr_text
-    )
-
-    print("")
-    print("==========================================")
-    print("        PASSPORT EXTRACTED FIELDS")
-    print("==========================================")
-    print(passport_fields)
-    print("==========================================")
-    print("")
-
-    # =====================================================
-    # SAVE PASSPORT INFORMATION
-    # FOR CROSS-DOCUMENT ANALYSIS
-    # =====================================================
-
-    reference_file = os.path.join(
-        UPLOAD_FOLDER,
-        "passport_reference.json"
-    )
-
-    try:
-
-        with open(
-            reference_file,
-            "w",
-            encoding="utf-8"
-        ) as f:
-
-            json.dump(
-                passport_fields,
-                f,
-                indent=4
-            )
-
-        print(
-            "Passport reference information saved."
-        )
-
-    except Exception as e:
-
-        print(
-            "Could not save passport reference:",
-            e
-        )
-
-    # -----------------------------------------------------
-    # Passport validation
-    # -----------------------------------------------------
-
-    validation_results = validate_passport(
-        passport_fields
-    )
-
-    # -----------------------------------------------------
-    # Forensic analysis
-    # -----------------------------------------------------
-
-    forensic_results = analyze_document(
-        filepath
-    )
-
-    # -----------------------------------------------------
-    # Face detection
-    # -----------------------------------------------------
-
-    face_result = detect_faces(
-        filepath
-    )
-
-    # -----------------------------------------------------
-    # Risk calculation
-    # -----------------------------------------------------
-
-    risk_result = calculate_passport_risk(
-        validation_results,
-        forensic_results,
-        face_result
-    )
-
-    # -----------------------------------------------------
-    # Result page
-    # -----------------------------------------------------
+@app.route("/immigration")
+def immigration():
 
     return render_template(
-        "upload_result.html",
-
-        filename=filename,
-
-        ocr_text=ocr_text,
-
-        passport_fields=passport_fields,
-
-        validation_results=validation_results,
-
-        forensic_results=forensic_results,
-
-        face_result=face_result,
-
-        risk_result=risk_result
+        "immigration.html"
     )
 
 
-# =========================================================
-# VISA SCREENING
-# =========================================================
-
-@app.route(
-    "/visa",
-    methods=["GET", "POST"]
-)
-def visa():
-
-    # -----------------------------------------------------
-    # GET request
-    # -----------------------------------------------------
-
-    if request.method == "GET":
-
-        return render_template(
-            "visa.html"
-        )
-
-    # -----------------------------------------------------
-    # Check uploaded file
-    # -----------------------------------------------------
-
-    if "visa" not in request.files:
-
-        return "No visa file uploaded."
-
-    file = request.files["visa"]
-
-    if file.filename == "":
-
-        return "No visa file selected."
-
-    # -----------------------------------------------------
-    # Save visa file
-    # -----------------------------------------------------
-
-    filename = secure_filename(
-        file.filename
-    )
-
-    filepath = os.path.join(
-        VISA_FOLDER,
-        filename
-    )
-
-    file.save(filepath)
-
-    # -----------------------------------------------------
-    # OCR
-    # -----------------------------------------------------
-
-    ocr_text = extract_text(
-        filepath
-    )
-
-    print("")
-    print("==========================================")
-    print("             VISA OCR TEXT")
-    print("==========================================")
-    print(ocr_text)
-    print("==========================================")
-    print("")
-
-    # -----------------------------------------------------
-    # Extract visa fields
-    # -----------------------------------------------------
-
-    visa_fields = extract_visa_fields(
-        ocr_text
-    )
-
-    print("")
-    print("==========================================")
-    print("          VISA EXTRACTED FIELDS")
-    print("==========================================")
-    print(visa_fields)
-    print("==========================================")
-    print("")
-
-    # =====================================================
-    # LOAD PREVIOUSLY SCREENED PASSPORT
-    # =====================================================
-
-    reference_file = os.path.join(
-        UPLOAD_FOLDER,
-        "passport_reference.json"
-    )
-
-    passport_reference = None
-
-    if os.path.exists(reference_file):
-
-        try:
-
-            with open(
-                reference_file,
-                "r",
-                encoding="utf-8"
-            ) as f:
-
-                passport_reference = json.load(f)
-
-            print("")
-            print("==========================================")
-            print("       PASSPORT REFERENCE LOADED")
-            print("==========================================")
-            print(passport_reference)
-            print("==========================================")
-            print("")
-
-        except Exception as e:
-
-            print(
-                "Could not load passport reference:",
-                e
-            )
-
-            passport_reference = None
-
-    else:
-
-        print(
-            "No passport_reference.json found."
-        )
-
-    # =====================================================
-    # CROSS-DOCUMENT ANALYSIS
-    # =====================================================
-
-    if passport_reference:
-
-        cross_document_result = compare_documents(
-            passport_reference,
-            visa_fields
-        )
-
-    else:
-
-        cross_document_result = [
-
-            {
-                "check": "Passport ↔ Visa Consistency",
-
-                "status": "WARNING",
-
-                "message": (
-                    "No passport screening data is available. "
-                    "Please screen a passport first."
-                )
-            }
-
-        ]
-
-    print("")
-    print("==========================================")
-    print("       CROSS-DOCUMENT ANALYSIS")
-    print("==========================================")
-    print(cross_document_result)
-    print("==========================================")
-    print("")
-
-    # -----------------------------------------------------
-    # Validate visa
-    # -----------------------------------------------------
-
-    visa_validation_results = validate_visa(
-        visa_fields
-    )
-
-    print("")
-    print("==========================================")
-    print("          VISA VALIDATION RESULTS")
-    print("==========================================")
-    print(visa_validation_results)
-    print("==========================================")
-    print("")
-
-    # -----------------------------------------------------
-    # Result page
-    # -----------------------------------------------------
-
-    return render_template(
-        "visa_result.html",
-
-        filename=filename,
-
-        ocr_text=ocr_text,
-
-        visa_fields=visa_fields,
-
-        visa_validation_results=visa_validation_results,
-
-        cross_document_result=cross_document_result
-    )
-
-
-# =========================================================
-# NATIONAL ID SCREENING
-# =========================================================
-
-@app.route(
-    "/national-id",
-    methods=["GET", "POST"]
-)
-def national_id():
-
-    # -----------------------------------------------------
-    # GET request
-    # -----------------------------------------------------
-
-    if request.method == "GET":
-
-        return render_template(
-            "national_id.html"
-        )
-
-    # -----------------------------------------------------
-    # Check file
-    # -----------------------------------------------------
-
-    if "national_id" not in request.files:
-
-        return "No National ID file uploaded."
-
-    file = request.files["national_id"]
-
-    if file.filename == "":
-
-        return "No National ID file selected."
-
-    # -----------------------------------------------------
-    # Save file
-    # -----------------------------------------------------
-
-    filename = secure_filename(
-        file.filename
-    )
-
-    filepath = os.path.join(
-        NATIONAL_ID_FOLDER,
-        filename
-    )
-
-    file.save(filepath)
-
-    # -----------------------------------------------------
-    # OCR
-    # -----------------------------------------------------
-
-    ocr_text = extract_text(
-        filepath
-    )
-
-    print("")
-    print("==========================================")
-    print("        NATIONAL ID OCR TEXT")
-    print("==========================================")
-    print(ocr_text)
-    print("==========================================")
-    print("")
-
-    # -----------------------------------------------------
-    # Extract fields
-    # -----------------------------------------------------
-
-    national_id_fields = extract_national_id_fields(
-        ocr_text
-    )
-
-    print("")
-    print("==========================================")
-    print("      NATIONAL ID EXTRACTED FIELDS")
-    print("==========================================")
-    print(national_id_fields)
-    print("==========================================")
-    print("")
-
-    # -----------------------------------------------------
-    # Validation
-    # -----------------------------------------------------
-
-    national_id_validation_results = validate_national_id(
-        national_id_fields
-    )
-
-    # -----------------------------------------------------
-    # Forensics
-    # -----------------------------------------------------
-
-    national_id_forensic_results = analyze_national_id(
-        filepath
-    )
-
-    # -----------------------------------------------------
-    # Face detection
-    # -----------------------------------------------------
-
-    face_result = detect_faces(
-        filepath
-    )
-
-    # =====================================================
-    # FACE COMPARISON
-    # =====================================================
-
-    reference_face_path = os.path.join(
-        REFERENCE_FOLDER,
-        "reference_face.jpg"
-    )
-
-    if os.path.exists(reference_face_path):
-
-        face_comparison_result = compare_faces(
-            filepath,
-            reference_face_path
-        )
-
-    else:
-
-        face_comparison_result = {
-            "status": "WARNING",
-            "match": False,
-            "similarity": 0,
-            "message": (
-                "Reference face image was not found."
-            )
-        }
-
-    print("")
-    print("==========================================")
-    print("        FACE COMPARISON RESULT")
-    print("==========================================")
-    print(face_comparison_result)
-    print("==========================================")
-    print("")
-
-    # -----------------------------------------------------
-    # Synthetic reference database
-    # -----------------------------------------------------
-
-    reference_result = check_reference_database(
-        national_id_fields
-    )
-
-    # -----------------------------------------------------
-    # Result page
-    # -----------------------------------------------------
-
-    return render_template(
-        "national_id_result.html",
-
-        filename=filename,
-
-        ocr_text=ocr_text,
-
-        national_id_fields=national_id_fields,
-
-        national_id_validation_results=(
-            national_id_validation_results
-        ),
-
-        national_id_forensic_results=(
-            national_id_forensic_results
-        ),
-
-        face_result=face_result,
-
-        face_comparison_result=face_comparison_result,
-
-        reference_result=reference_result
-    )
-
-
-# =========================================================
-# TRAFFIC ENFORCEMENT
-# =========================================================
+# ============================================================
+# TRAFFIC VERIFICATION
+# ============================================================
 
 @app.route("/traffic")
 def traffic():
 
-    return """
-    <h1>Traffic Enforcement</h1>
-
-    <p>
-        Driving License • RC • Pollution Certificate
-    </p>
-
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
-    """
+    return render_template(
+        "traffic.html"
+    )
 
 
-# =========================================================
-# BANKING
-# =========================================================
+# ============================================================
+# BANKING & KYC
+# ============================================================
 
-@app.route("/banking")
-def banking():
+@app.route("/kyc")
+def kyc():
 
-    return """
-    <h1>Banking</h1>
+    return render_template(
+        "kyc.html"
+    )
 
-    <p>
-        Customer Identity • Documents
-    </p>
-
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
-    """
-
-
-# =========================================================
-# BORDER INTEGRITY
-# =========================================================
+# ============================================================
+# BORDER CHECKPOINT
+# ============================================================
 
 @app.route("/border")
 def border():
 
-    return """
-    <h1>Border Integrity</h1>
-
-    <p>
-        Travel Documents • Identity
-    </p>
-
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
-    """
+    return render_template(
+        "border.html"
+    )
 
 
-# =========================================================
-# GOVERNMENT SERVICES
-# =========================================================
+# ============================================================
+# UPLOAD PAGE
+# ============================================================
 
-@app.route("/government")
-def government():
+@app.route(
+    "/upload/<document_type>"
+)
+def upload(document_type):
 
-    return """
-    <h1>Government Services</h1>
-
-    <p>
-        Identity • Certificates • Documents
-    </p>
-
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
-    """
+    return render_template(
+        "upload.html",
+        document_type=document_type
+    )
 
 
-# =========================================================
-# START FLASK SERVER
-# =========================================================
+# ============================================================
+# PROCESS UPLOAD
+# REAL OCR PROCESSING
+# ============================================================
+
+@app.route(
+    "/process-upload",
+    methods=["POST"]
+)
+def process_upload():
+
+    # ========================================================
+    # GET DOCUMENT TYPE
+    # ========================================================
+
+    document_type = request.form.get(
+        "document_type"
+    )
+
+
+    # ========================================================
+    # GET UPLOADED FILES
+    # ========================================================
+
+    document = request.files.get(
+        "document"
+    )
+
+    face_photo = request.files.get(
+        "face_photo"
+    )
+
+
+    # ========================================================
+    # OPTIONAL SECOND DOCUMENT
+    #
+    # Used for cross-document consistency checking.
+    # ========================================================
+
+    comparison_document = request.files.get(
+        "comparison_document"
+    )
+
+    comparison_document_type = request.form.get(
+        "comparison_document_type"
+    )
+
+
+    # ========================================================
+    # DOCUMENT VALIDATION
+    # ========================================================
+
+    if (
+        not document
+        or not document.filename
+    ):
+
+        flash(
+            "Please upload a document."
+        )
+
+        return redirect(
+            url_for(
+                "upload",
+                document_type=document_type
+            )
+        )
+
+
+    if not allowed_file(
+        document.filename
+    ):
+
+        flash(
+            "Invalid document file type. "
+            "Only PNG, JPG and JPEG are allowed."
+        )
+
+        return redirect(
+            url_for(
+                "upload",
+                document_type=document_type
+            )
+        )
+
+
+    # ========================================================
+    # SECURE DOCUMENT FILENAME
+    # ========================================================
+
+    original_filename = secure_filename(
+        document.filename
+    )
+
+    extension = original_filename.rsplit(
+        ".",
+        1
+    )[1].lower()
+
+
+    # Generate unique filename
+    document_filename = (
+        f"document_{uuid.uuid4().hex}.{extension}"
+    )
+
+
+    document_path = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        document_filename
+    )
+
+
+    # ========================================================
+    # SAVE DOCUMENT
+    # ========================================================
+
+    document.save(
+        document_path
+    )
+
+
+    # ========================================================
+    # RUN REAL OCR
+    # ========================================================
+
+    try:
+
+        extracted_data = (
+            extract_document_fields(
+                document_path
+            )
+        )
+
+    except Exception as error:
+
+        # Remove uploaded file if OCR fails
+        if os.path.exists(
+            document_path
+        ):
+            os.remove(
+                document_path
+            )
+
+        flash(
+            f"OCR processing failed: {error}"
+        )
+
+        return redirect(
+            url_for(
+                "upload",
+                document_type=document_type
+            )
+        )
+
+
+    # ========================================================
+    # CROSS-DOCUMENT VERIFICATION
+    #
+    # This is the new feature.
+    #
+    # The first document is always processed normally.
+    # If a second document is supplied, it is also processed
+    # using the same real OCR engine.
+    # ========================================================
+
+    cross_document_result = {
+        "status": "REVIEW",
+        "message": (
+            "A second document was not provided. "
+            "Cross-document comparison was not performed."
+        ),
+        "documents_checked": 1,
+        "matched_fields": [],
+        "mismatched_fields": [],
+        "risk_points": 0
+    }
+
+
+    comparison_document_filename = None
+    comparison_document_path = None
+    comparison_extracted_data = None
+
+
+    # ========================================================
+    # PROCESS SECOND DOCUMENT IF PROVIDED
+    # ========================================================
+
+    if (
+        comparison_document
+        and comparison_document.filename
+    ):
+
+        # Validate second document file type
+        if not allowed_file(
+            comparison_document.filename
+        ):
+
+            # Remove primary document because the
+            # complete upload request is invalid.
+            if os.path.exists(
+                document_path
+            ):
+                os.remove(
+                    document_path
+                )
+
+            flash(
+                "Invalid comparison document file type. "
+                "Only PNG, JPG and JPEG are allowed."
+            )
+
+            return redirect(
+                url_for(
+                    "upload",
+                    document_type=document_type
+                )
+            )
+
+
+        # ----------------------------------------------------
+        # Secure second document filename
+        # ----------------------------------------------------
+
+        comparison_original_filename = secure_filename(
+            comparison_document.filename
+        )
+
+        comparison_extension = (
+            comparison_original_filename.rsplit(
+                ".",
+                1
+            )[1].lower()
+        )
+
+
+        comparison_document_filename = (
+            f"comparison_{uuid.uuid4().hex}."
+            f"{comparison_extension}"
+        )
+
+
+        comparison_document_path = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            comparison_document_filename
+        )
+
+
+        # ----------------------------------------------------
+        # Save second document
+        # ----------------------------------------------------
+
+        comparison_document.save(
+            comparison_document_path
+        )
+
+
+        # ----------------------------------------------------
+        # Run REAL OCR on second document
+        # ----------------------------------------------------
+
+        try:
+
+            comparison_extracted_data = (
+                extract_document_fields(
+                    comparison_document_path
+                )
+            )
+
+        except Exception as error:
+
+            # Remove both files if second OCR fails
+            if os.path.exists(
+                document_path
+            ):
+                os.remove(
+                    document_path
+                )
+
+            if os.path.exists(
+                comparison_document_path
+            ):
+                os.remove(
+                    comparison_document_path
+                )
+
+            flash(
+                f"Comparison document OCR processing failed: {error}"
+            )
+
+            return redirect(
+                url_for(
+                    "upload",
+                    document_type=document_type
+                )
+            )
+
+
+        # ----------------------------------------------------
+        # Prepare data for cross-document comparison
+        #
+        # Your cross_document.py expects:
+        #
+        # full_name
+        # date_of_birth
+        # gender
+        # nationality
+        #
+        # OCR currently uses fields such as:
+        # name / dob
+        #
+        # Therefore we map the existing OCR output into
+        # the comparison module without changing the OCR logic.
+        # ----------------------------------------------------
+
+        primary_comparison_data = {
+
+            "document_type": document_type,
+
+            "document_number": extracted_data.get(
+                "document_number"
+            ),
+
+            "full_name": extracted_data.get(
+                "full_name",
+                extracted_data.get("name")
+            ),
+
+            "date_of_birth": extracted_data.get(
+                "date_of_birth",
+                extracted_data.get("dob")
+            ),
+
+            "gender": extracted_data.get(
+                "gender"
+            ),
+
+            "nationality": extracted_data.get(
+                "nationality"
+            )
+        }
+
+
+        comparison_comparison_data = {
+
+            "document_type": (
+                comparison_document_type
+                or "comparison document"
+            ),
+
+            "document_number": comparison_extracted_data.get(
+                "document_number"
+            ),
+
+            "full_name": comparison_extracted_data.get(
+                "full_name",
+                comparison_extracted_data.get("name")
+            ),
+
+            "date_of_birth": comparison_extracted_data.get(
+                "date_of_birth",
+                comparison_extracted_data.get("dob")
+            ),
+
+            "gender": comparison_extracted_data.get(
+                "gender"
+            ),
+
+            "nationality": comparison_extracted_data.get(
+                "nationality"
+            )
+        }
+
+
+        # ----------------------------------------------------
+        # REAL CROSS-DOCUMENT COMPARISON
+        # ----------------------------------------------------
+
+        try:
+
+            cross_document_result = compare_documents(
+                [
+                    primary_comparison_data,
+                    comparison_comparison_data
+                ]
+            )
+
+        except Exception as error:
+
+            cross_document_result = {
+                "status": "REVIEW",
+                "message": (
+                    "Cross-document comparison could not "
+                    f"be completed: {error}"
+                ),
+                "documents_checked": 2,
+                "matched_fields": [],
+                "mismatched_fields": [],
+                "risk_points": 0
+            }
+
+
+    # ========================================================
+    # DOCUMENT REGISTRY VERIFICATION
+    # ========================================================
+
+    registry_result = verify_document({
+
+        **extracted_data,
+
+        "document_type": document_type,
+
+        "full_name": extracted_data.get(
+            "name"
+        )
+    })
+
+
+    # ========================================================
+    # DOCUMENT VALIDATION
+    # ========================================================
+
+    validation_result = validate_document(
+        extracted_data,
+        document_type,
+        document_path
+    )
+
+
+    # ========================================================
+    # TAMPERING DETECTION
+    # ========================================================
+
+    try:
+
+        tampering_result = detect_tampering(
+            document_path
+        )
+
+    except Exception as error:
+
+        tampering_result = {
+            "status": "REVIEW",
+            "score": 50,
+            "ela_score": 0,
+            "suspicious_ratio": 0,
+            "edge_ratio": 0,
+            "laplacian_variance": 0,
+            "reasons": [
+                f"Tampering analysis could not be completed: {error}"
+            ]
+        }
+
+
+    # ========================================================
+    # OPTIONAL FACE PHOTO
+    # ========================================================
+
+    face_filename = None
+
+
+    if (
+        face_photo
+        and face_photo.filename
+    ):
+
+        if not allowed_file(
+            face_photo.filename
+        ):
+
+            # Remove document because
+            # complete upload is invalid
+            if os.path.exists(
+                document_path
+            ):
+                os.remove(
+                    document_path
+                )
+
+            # Remove comparison document if it exists
+            if (
+                comparison_document_path
+                and os.path.exists(
+                    comparison_document_path
+                )
+            ):
+                os.remove(
+                    comparison_document_path
+                )
+
+            flash(
+                "Invalid face image type. "
+                "Only PNG, JPG and JPEG are allowed."
+            )
+
+            return redirect(
+                url_for(
+                    "upload",
+                    document_type=document_type
+                )
+            )
+
+
+        face_original_filename = (
+            secure_filename(
+                face_photo.filename
+            )
+        )
+
+
+        face_extension = (
+            face_original_filename.rsplit(
+                ".",
+                1
+            )[1].lower()
+        )
+
+
+        face_filename = (
+            f"face_{uuid.uuid4().hex}.{face_extension}"
+        )
+
+
+        face_path = os.path.join(
+            app.config["UPLOAD_FOLDER"],
+            face_filename
+        )
+
+
+        face_photo.save(
+            face_path
+        )
+
+
+        # ====================================================
+        # FACE VERIFICATION
+        # ====================================================
+
+        try:
+
+            face_result = compare_faces(
+                document_path,
+                face_path
+            )
+
+        except Exception as error:
+
+            face_result = {
+                "status": "REVIEW",
+                "score": 0,
+                "match": False,
+                "reason": (
+                    f"Face verification could not be completed: {error}"
+                )
+            }
+
+    else:
+
+        face_result = {
+            "status": "NOT PROVIDED",
+            "score": 0,
+            "match": False,
+            "reason": (
+                "Verification face image was not provided."
+            )
+        }
+
+
+    # ========================================================
+    # LIVENESS DETECTION
+    # ========================================================
+
+    try:
+
+        if face_filename:
+
+            liveness_path = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                face_filename
+            )
+
+            liveness_result = (
+                calculate_liveness_score(
+                    liveness_path
+                )
+            )
+
+        else:
+
+            liveness_result = {
+                "status": "NOT PROVIDED",
+                "score": 0,
+                "sharpness": 0,
+                "contrast": 0,
+                "texture": 0,
+                "reason": (
+                    "Verification image was not provided."
+                )
+            }
+
+    except Exception as error:
+
+        liveness_result = {
+            "status": "REVIEW",
+            "score": 0,
+            "sharpness": 0,
+            "contrast": 0,
+            "texture": 0,
+            "reason": (
+                f"Liveness analysis could not be completed: {error}"
+            )
+        }
+
+
+    # ========================================================
+    # AI RISK ASSESSMENT
+    #
+    # Existing risk engine logic is intentionally unchanged.
+    #
+    # Cross-document result is passed into the existing risk engine
+    # so its risk contribution can be included in the overall risk assessment.
+    # ========================================================
+
+    risk_result = calculate_risk(
+        validation_result,
+        tampering_result,
+        face_result,
+        liveness_result,
+        registry_result,
+        cross_document_result
+    )
+
+
+    # ========================================================
+    # ADD CROSS-DOCUMENT INFORMATION TO RISK RESULT
+    #
+    # Keep the cross-document status and risk contribution
+    # available to the results page.
+    # ========================================================
+
+    risk_result["cross_document_status"] = (
+        cross_document_result.get(
+            "status",
+            "REVIEW"
+        )
+    )
+
+    risk_result["cross_document_risk_points"] = (
+        cross_document_result.get(
+            "risk_points",
+            0
+        )
+    )
+
+
+    # ========================================================
+    # SHOW ANALYSIS PAGE
+    # ========================================================
+
+    return render_template(
+        "analysis.html",
+
+        document_type=document_type,
+
+        document_filename=document_filename,
+
+        face_filename=face_filename,
+
+        extracted_data=extracted_data,
+
+        validation_result=validation_result,
+
+        registry_result=registry_result,
+
+        tampering_result=tampering_result,
+
+        face_result=face_result,
+
+        liveness_result=liveness_result,
+
+        risk_result=risk_result,
+
+        # ====================================================
+        # NEW CROSS-DOCUMENT DATA
+        # ====================================================
+
+        cross_document_result=cross_document_result,
+
+        comparison_document_filename=(
+            comparison_document_filename
+        ),
+
+        comparison_extracted_data=(
+            comparison_extracted_data
+        )
+    )
+
+
+# ============================================================
+# DEMO RESULTS
+# ============================================================
+
+@app.route(
+    "/demo-results/<document_type>"
+)
+def demo_results(document_type):
+
+    extracted_data = {
+
+        "name": "DEMO USER",
+
+        "document_number": "DEMO123456",
+
+        "nationality": "INDIA",
+
+        "dob": "01/01/2000",
+
+        "expiry_date": "01/01/2035"
+
+    }
+
+
+    return render_template(
+        "results.html",
+
+        document_type=document_type,
+
+        extracted_data=extracted_data
+    )
+
+
+# ============================================================
+# OFFICER DECISION
+# ============================================================
+
+@app.route(
+    "/decision",
+    methods=["POST"]
+)
+def decision():
+
+    document_type = request.form.get(
+        "document_type"
+    )
+
+    officer_decision = request.form.get(
+        "officer_decision"
+    )
+
+
+    return render_template(
+        "decision.html",
+
+        document_type=document_type,
+
+        officer_decision=officer_decision
+    )
+
+
+# ============================================================
+# RUN APPLICATION
+# ============================================================
 
 if __name__ == "__main__":
 
-    print("")
-    print("==========================================")
-    print("     AI IDENTITY SCREENING SYSTEM")
-    print("     Flask Server Starting...")
-    print("==========================================")
-    print("")
-
     app.run(
-        debug=True,
-        host="127.0.0.1",
-        port=5000
+        debug=True
     )

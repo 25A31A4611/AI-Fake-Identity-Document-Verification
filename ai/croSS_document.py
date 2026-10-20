@@ -383,3 +383,200 @@ def compare_documents(passport_fields, visa_fields):
 
 
     return results
+# =========================================================
+# NATIONAL ID ↔ PASSPORT COMPARISON
+# =========================================================
+
+def compare_national_id_passport(national_id_fields, passport_fields):
+
+    results = []
+
+    # -----------------------------------------------------
+    # 1. NAME COMPARISON
+    # -----------------------------------------------------
+
+    national_id_name = normalize_name(
+        national_id_fields.get("name", "")
+    )
+
+    passport_name = normalize_name(
+        passport_fields.get("name", "")
+    )
+
+    if not national_id_name:
+        results.append({
+            "check": "National ID ↔ Passport Name",
+            "status": "WARNING",
+            "message": "National ID name was not available."
+        })
+
+    elif not passport_name:
+        results.append({
+            "check": "National ID ↔ Passport Name",
+            "status": "WARNING",
+            "message": "Passport name was not available."
+        })
+
+    elif national_id_name == passport_name:
+        results.append({
+            "check": "National ID ↔ Passport Name",
+            "status": "PASS",
+            "message": "Name matches between National ID and Passport."
+        })
+
+    else:
+        results.append({
+            "check": "National ID ↔ Passport Name",
+            "status": "REVIEW",
+            "message": "Name mismatch detected between National ID and Passport."
+        })
+
+
+    # -----------------------------------------------------
+    # 2. DATE OF BIRTH COMPARISON
+    # -----------------------------------------------------
+
+    national_id_dob = normalize_date(
+        national_id_fields.get("date_of_birth", "")
+    )
+
+    passport_dob = normalize_date(
+        passport_fields.get("date_of_birth", "")
+    )
+
+    if not national_id_dob:
+        results.append({
+            "check": "National ID ↔ Passport Date of Birth",
+            "status": "WARNING",
+            "message": "National ID date of birth was not available."
+        })
+
+    elif not passport_dob:
+        results.append({
+            "check": "National ID ↔ Passport Date of Birth",
+            "status": "WARNING",
+            "message": "Passport date of birth was not available."
+        })
+
+    elif national_id_dob == passport_dob:
+        results.append({
+            "check": "National ID ↔ Passport Date of Birth",
+            "status": "PASS",
+            "message": "Date of birth matches between National ID and Passport."
+        })
+
+    else:
+        results.append({
+            "check": "National ID ↔ Passport Date of Birth",
+            "status": "REVIEW",
+            "message": "Date of birth mismatch detected between National ID and Passport."
+        })
+
+
+    # -----------------------------------------------------
+    # 3. GENDER COMPARISON
+    # -----------------------------------------------------
+
+    national_id_gender = normalize_text(
+        national_id_fields.get("gender", "")
+    )
+
+    passport_gender = normalize_text(
+        passport_fields.get("gender", "")
+    )
+
+    gender_map = {
+        "MALE": "M",
+        "M": "M",
+        "FEMALE": "F",
+        "F": "F",
+        "X": "X"
+    }
+
+    national_id_gender = gender_map.get(
+        national_id_gender,
+        national_id_gender
+    )
+
+    passport_gender = gender_map.get(
+        passport_gender,
+        passport_gender
+    )
+
+    if not national_id_gender:
+        results.append({
+            "check": "National ID ↔ Passport Gender",
+            "status": "WARNING",
+            "message": "National ID gender was not available."
+        })
+
+    elif not passport_gender:
+        results.append({
+            "check": "National ID ↔ Passport Gender",
+            "status": "WARNING",
+            "message": "Passport gender was not available."
+        })
+
+    elif national_id_gender == passport_gender:
+        results.append({
+            "check": "National ID ↔ Passport Gender",
+            "status": "PASS",
+            "message": "Gender matches between National ID and Passport."
+        })
+
+    else:
+        results.append({
+            "check": "National ID ↔ Passport Gender",
+            "status": "REVIEW",
+            "message": "Gender mismatch detected between National ID and Passport."
+        })
+
+
+    # -----------------------------------------------------
+    # 4. OVERALL RESULT
+    # -----------------------------------------------------
+
+    has_review = any(
+        result["status"] == "REVIEW"
+        for result in results
+    )
+
+    has_warning = any(
+        result["status"] == "WARNING"
+        for result in results
+    )
+
+    if has_review:
+
+        overall_status = "REVIEW"
+
+        overall_message = (
+            "National ID and Passport contain inconsistent identity information. "
+            "Officer review recommended."
+        )
+
+    elif has_warning:
+
+        overall_status = "WARNING"
+
+        overall_message = (
+            "Some National ID ↔ Passport fields were unavailable "
+            "for complete comparison."
+        )
+
+    else:
+
+        overall_status = "PASS"
+
+        overall_message = (
+            "National ID and Passport identity information "
+            "is consistent across the compared fields."
+        )
+
+    results.append({
+        "check": "Overall National ID ↔ Passport Analysis",
+        "status": overall_status,
+        "message": overall_message
+    })
+
+    return results
